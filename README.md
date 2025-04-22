@@ -6,6 +6,7 @@ para aplicacion web y movil para rentar parqueaderos
 * para probar cada uno de los apis se debe desde una aplicacion que permita enviar los datos o desde postman, los datos para las apis se envian en formato json
 
 ## La estructura que poseer el proyecto
+ ``` 
 ├── .env
 ├── database.py
 ├── main.py
@@ -19,3 +20,4 @@ para aplicacion web y movil para rentar parqueaderos
 ├── encrypt
 |    ├── __init__.py
 |    ├── encryptPass.py
+ ``` 
