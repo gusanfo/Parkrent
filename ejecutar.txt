@@ -1,0 +1,3 @@
+abri cmd y ejecutar
+
+uvicorn main:app --reload
