@@ -28,7 +28,7 @@ def encrypt(password:str):
     return hashed_password
 
 def veryfyPass(password:str, haspw) -> bool:
-    """valida que la ontraseña sea aceptada comparada contr un hash.
+    """valida que la contraseña sea aceptada comparada contr un hash.
     Args:
         password (str): Contraseña en texto plano.
         haspw (bytes): el hash de la contraseña 

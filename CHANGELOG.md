@@ -1,3 +1,9 @@
+# V0.0.2
+* Actualizacion de la bd
+* actualizacion de sqls
+* creacion clases place.py y parking.py
+* se generan 3 nuevos api, para traer paises, estados o departamentos y ciudades
+
 # v 0.0.1
 * version inicial del proyecto de renta de parqueaderos
 * se tienen los archivos database.py, main.py .env

@@ -11,7 +11,7 @@ from encrypt.encryptPass import encrypt
 from config.parametros import *
 
 def createUser(connection, user:dict):
-    """valida que la ontraseña sea aceptada comparada contr un hash.
+    """crea un registro en usuarios
     Args:
         connection: conexion a la base de datos que este abierta.
         user (dict): diccionario con los datos necesarios 
@@ -22,11 +22,12 @@ def createUser(connection, user:dict):
     """
     hashPass = encrypt(user[PASSWORRD_ES])
     with connection.cursor() as cursor:
-        cursor.execute(SQL1, (
-            user[NAME_ES],
-            user[EMAIL_ES],
-            hashPass        
-        ))
+        cursor.execute(SQL1, {
+            'username': user[NAME_ES],
+            'lastname': user[LASTNAME_ES],
+            'email': user[EMAIL_ES],
+            'password': hashPass}        
+        )
     connection.commit()
     userType(user, connection)
     
@@ -38,7 +39,9 @@ def getUserId(email:str, connection):
         connection: conexion a la base de datos que este abierta.
     """
     with connection.cursor() as cursor:
-        cursor.execute(SQL2, (email))
+        cursor.execute(SQL2, {
+            "campo": USER_ID,
+            "email": email})
         userId = cursor.fetchone()
     return userId
 
@@ -52,5 +55,8 @@ def userType(user:dict, connection):
     userId = getUserId(user[EMAIL_ES], connection)[USER_ID]
     userType = user[USER_TYPE]
     with connection.cursor() as cursor:
-        cursor.execute(SQL3, (userType, userId))
+        cursor.execute(SQL3, {
+            "userType": userType,
+            "userId": userId} 
+        )
     connection.commit()
