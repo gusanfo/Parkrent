@@ -17,31 +17,32 @@ def createUser(connection, user:dict):
         user (dict): diccionario con los datos necesarios 
     Ejemplo:
         >>> connection = get_conection(()
-        >>> user = {"nombre": "prueba", "correo": "correo@correo.com"}
+        >>> user = {"nombre": "prueba", "apellido":"perez" ,"correo": "correo@correo.com", "contrasenia": "esta es mi contraenia"}
         >>> createUser(connection, user)
     """
     hashPass = encrypt(user[PASSWORRD_ES])
     with connection.cursor() as cursor:
         cursor.execute(SQL1, {
-            'username': user[NAME_ES],
-            'lastname': user[LASTNAME_ES],
-            'email': user[EMAIL_ES],
-            'password': hashPass}        
+            USER_NAME: user[NAME_ES],
+            LASTNAME_EN: user[LASTNAME_ES],
+            EMAIL_EN: user[EMAIL_ES],
+            PASSWORD_EN: hashPass}        
         )
     connection.commit()
     userType(user, connection)
     
 
-def getUserId(email:str, connection):
+def getUserId(email:str, connection)-> dict:
     """valida el correo del usuario y si exise retornar su user_id.
     Args:
         email(str): string del correo electronico
         connection: conexion a la base de datos que este abierta.
+    return
+        dict: resultado de la consulta
     """
     with connection.cursor() as cursor:
         cursor.execute(SQL2, {
-            "campo": USER_ID,
-            "email": email})
+            EMAIL_EN: email})
         userId = cursor.fetchone()
     return userId
 
@@ -52,11 +53,13 @@ def userType(user:dict, connection):
         user (dict): diccionario con los datos necesarios 
         connection: conexion a la base de datos que este abierta.
     """
+    print(getUserId(user[EMAIL_ES], connection))
     userId = getUserId(user[EMAIL_ES], connection)[USER_ID]
+    print(user)
     userType = user[USER_TYPE]
     with connection.cursor() as cursor:
         cursor.execute(SQL3, {
-            "userType": userType,
-            "userId": userId} 
+            USER_TYPE_EN: userType,
+            USER_ID_EN: userId} 
         )
     connection.commit()

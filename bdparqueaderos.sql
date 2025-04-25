@@ -32,12 +32,16 @@ CREATE TABLE `parqueaderos` (
   `direccion` varchar(255),
   `largo` double,
   `ancho` double,
+  `costo_dia` double NOT NULL,
   PRIMARY KEY(id_parqueadero),
   KEY PAR_KEY_DUE (dueño),
   KEY PAR_KEY_UBI (id_ubicacion),
   CONSTRAINT PAR_fk_LUG FOREIGN KEY (id_ubicacion) references lugar(id_lugar),
   CONSTRAINT PAR_fk_DUE FOREIGN KEY (dueño) references usuarios(id_usuario)
 );
+
+ALTER TABLE `parqueaderos` 
+ADD COLUMN `fotos` JSON DEFAULT NULL COMMENT 'Array de rutas de fotos';
 
 CREATE TABLE `reserva` (
   `id_reserva` BIGINT (30) NOT NULL AUTO_INCREMENT,

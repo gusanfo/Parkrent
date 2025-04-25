@@ -1,4 +1,8 @@
-# V0.0.2
+# v 0.0.3
+* se modifican los metodos de la classe parking.py
+* se genera una nueva api para agregar parqueaderos, y añadir fotos
+
+# v 0.0.2
 * Actualizacion de la bd
 * actualizacion de sqls
 * creacion clases place.py y parking.py
