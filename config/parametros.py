@@ -36,6 +36,10 @@ USER_TYPE_EN = "userType"
 PHOTO = "photo"
 PHOTOS_PARKING_DIR = "upload/fotos/parqueaderos"
 PHOTOS_UDER_DIR = "upload/fotos/usuarios"
+BYID = "ById"
+BYOWNER = "ByOwner"
+PARKING = "parking"
+PHOTOS = "fotos"
 
 #mensaje
 MESSAGE = "mensaje"
@@ -49,11 +53,13 @@ BAD_IMAGES = "Solo se permiten imágenes JPG/PNG"
 
 #paths para las apis
 PATH_NEW_USER = "/crearusuario/"
-PATH_LOGIN = "/login/"
-PATH_CITIES = "/cities/"
-PATH_STATES = "/states/"
-PATH_COUNTRIES = "/countries/"
-PATH_NEW_PARKING = "/crear_parqueadero.php/"
+PATH_LOGIN = "/login.php/"
+PATH_CITIES = "/cities.php/"
+PATH_STATES = "/states.php/"
+PATH_COUNTRIES = "/countries.php/"
+PATH_NEW_PARKING = "/create_parking.php/"
+PATH_GET_PARKING = "/get_parking.php/"
+PATH_GET_PARKING_OWNER = "/get_parkings_by_owner.php/"
 
 #sqls
 SQL1 = """
@@ -77,4 +83,10 @@ SQL_PLACE = {
         AND id_ubicacion_padre = %(parent_id)s
     """
 }
-
+SQL_PARKINGS = {
+    'ById': """select direccion, largo, ancho, costo_dia, fotos
+                from parqueaderos where id_parqueadero = %(parking)s""",
+    'ByOwner': """SELECT id_parqueadero, id_ubicacion, direccion, largo, ancho, costo_dia, fotos 
+                FROM parqueaderos 
+                WHERE dueño = %(owner)s"""
+}

@@ -1,6 +1,8 @@
 # v 0.0.3
 * se modifican los metodos de la classe parking.py
 * se genera una nueva api para agregar parqueaderos, y añadir fotos
+* permite que el parqueadero creado se genere sin fotos
+* Se crean apis, una para traer la informacion de parqueaderopor id, y otra para traer parqueaderos por dueño
 
 # v 0.0.2
 * Actualizacion de la bd

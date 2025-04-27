@@ -15,19 +15,50 @@ from fastapi import UploadFile, HTTPException
 
 "metodos para añadir parqueadero, editarparqueadero, borrar parqueadero, hacer una reserva, ver todas las reservas"
 
+def getParkingByOwner(connection, idOwner: int):
+    """trae los datos de los parqueaderos de un dueño
+    Args:
+        connection: conexion a la base de datos que este abierta.
+        idOwner (int): identificador del parqueadero
+    Returns:
+        dict: diccionario con la informacion del parqueadero
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(SQL_PARKINGS[BYOWNER], {
+            OWNER: idOwner
+            }
+        )
+        res = cursor.fetchall()
+    return res
+
+def getParkingByID(connection, idParking: int):
+    """trae los datos de un parqueadero
+    Args:
+        connection: conexion a la base de datos que este abierta.
+        idParking (int): identificador del parqueadero
+    Returns:
+        dict: diccionario con la informacion del parqueadero
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(SQL_PARKINGS[BYID], {
+            PARKING: idParking
+            }
+        )
+        res = cursor.fetchone()
+    return res
+
 async def addParking(connection, data:dict, photosList):
     """crea un parqueadero
     Args:
         connection: conexion a la base de datos que este abierta.
-        data (dict): diccionario con los datos necesarios 
+        data (dict): diccionario con los datos necesarios
+        photoList: es la lista con los archivos adjuntos
     Ejemplo:
         >>> connection = get_conection(()
         >>> data = {"owner":1, "place": 1, "address": "avenida americas..", "long": 7,2, "width": 4, "price": 1500,
                     "photo": ["parqueadero1/photo1.png"]}
         >>> createUser(connection, data)
     """
-    print("AQUI")
-    print(data)
     photos = await save_photos_to_disk(photosList, data[OWNER])
     with connection.cursor() as cursor:
         cursor.execute(SQL5, {
@@ -59,6 +90,7 @@ async def save_photos_to_disk(photos: list[UploadFile], owner_id: int):
     os.makedirs(upload_dir, exist_ok=True)
     
     for photo in photos:
+        if photo.size==0: return[]
         try:
             # Validar extensión del archivo
             if not photo.filename.lower().endswith(('.jpg', '.jpeg', '.png')):
