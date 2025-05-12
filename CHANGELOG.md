@@ -1,3 +1,9 @@
+# v 0.0.4
+* se modifican los metodos de la classe parking.py
+* se agregan dos api, una para eliminar parqueaderoy otra para actualizar parqueadero
+* la api de elimnar parqueadero elimina el parqueadero de la base de datos y elimina las fotos del sistema de archivos
+* El api de editar parqueadero permite elimar fotos, añadir fotos, y editarlos datos del parqueadero, sino se queiren agregar mas fotos ni eliminar esos parametros no se envian
+
 # v 0.0.3
 * se modifican los metodos de la classe parking.py
 * se genera una nueva api para agregar parqueaderos, y añadir fotos

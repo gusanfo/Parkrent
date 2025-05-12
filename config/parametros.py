@@ -60,6 +60,8 @@ PATH_COUNTRIES = "/countries.php/"
 PATH_NEW_PARKING = "/create_parking.php/"
 PATH_GET_PARKING = "/get_parking.php/"
 PATH_GET_PARKING_OWNER = "/get_parkings_by_owner.php/"
+PATH_DELETE_PARKING = "/delete_parking.php/{ownwer_id}/{parking_id}/"
+PATH_UPDATE_PARKING = "/UPDATE_parking.php/"
 
 #sqls
 SQL1 = """
@@ -90,3 +92,22 @@ SQL_PARKINGS = {
                 FROM parqueaderos 
                 WHERE dueño = %(owner)s"""
 }
+SQL_DELETE_PARKING = """
+DELETE FROM parqueaderos 
+WHERE id_parqueadero = %(parking)s
+AND dueño = %(owner)s
+"""
+SQL_UPDATE_PARKING = """
+UPDATE parqueaderos 
+SET 
+    id_ubicacion = %(place)s,
+    direccion = %(address)s,
+    largo = %(long)s,
+    ancho = %(width)s,
+    costo_dia = %(price)s,
+    fotos = %(photo)s
+WHERE 
+    id_parqueadero = %(parking)s 
+    AND dueño = %(owner)s
+"""
+SQL_PHOTOS_BY_OWNER_PARKING = "SELECT fotos FROM parqueaderos WHERE id_parqueadero = %s AND dueño = %s"

@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException, Query, UploadFile, File, Form
+from fastapi import FastAPI, HTTPException, Query, UploadFile, File, Form, Path
+from typing import Optional, List
 from database import get_db_connection
 from routes.createUser import createUser, getUserId
 from routes.place import *
@@ -17,9 +18,6 @@ def pruebas(idOwner: int = Query(..., alias="owner")):
     connection = get_db_connection()
     fotos = getParkingByOwner(connection, idOwner)
     return {"parqueaderos": fotos}
-
-
-
 
 @app.post(PATH_NEW_USER)
 def crearusuario(user: dict):
@@ -156,9 +154,8 @@ def getPArkings(idOwner: int = Query(..., alias="owner")):
 
 @app.post(PATH_NEW_PARKING)
 async def createParking(owner: int = Form(...), place: int = Form(...), address: str = Form(...),
-    long: float = Form(...), width: float = Form(...), price: float = Form(...),
-    files: List[UploadFile] = File(...)):
-
+        long: float = Form(...), width: float = Form(...), price: float = Form(...),
+        files: List[UploadFile] = File(...)):
     connection = get_db_connection()
     if not connection:
         raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
@@ -178,6 +175,62 @@ async def createParking(owner: int = Form(...), place: int = Form(...), address:
         }
         await addParking(connection, parking_data, files)
         return {MESSAGE: SUCCESSFUL_PARKING}    
+    except pymysql.Error as e:
+        connection.rollback()
+        raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
+    finally:
+        connection.close()
+
+@app.delete(PATH_DELETE_PARKING)
+async def delete_parking_endpoint(
+        parking_id: int = Path(..., title="ID del parqueadero", gt=0),
+        ownwer_id: int = Path(..., title="dueño del parqueadero", gt=0)
+):
+    connection = get_db_connection()
+    if not connection:
+        raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
+    try:
+        return await delete_parking(connection,parking_id, ownwer_id)
+    except pymysql.Error as e:
+        connection.rollback()
+        raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
+    finally:
+        connection.close()
+
+@app.patch(PATH_UPDATE_PARKING)
+async def update_parking_endpoint(
+    parkingId: int = Form(...),
+    ownerId: int = Form(...),
+    place: Optional[int] = Form(None),
+    address: Optional[str] = Form(None),
+    long: Optional[float] = Form(None),
+    width: Optional[float] = Form(None),
+    price: Optional[float] = Form(None),
+    fileToDelete: Optional[str] = Form(None),
+    newFiles: Optional[List[UploadFile]] = File(None)
+):
+    connection = get_db_connection()
+    if not connection:
+        raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
+    
+    try:
+        update_data = {
+            'place': place,
+            'address': address,
+            'long': long,
+            'width': width,
+            'price': price
+        }
+        print(newFiles)
+        print(fileToDelete)
+        
+        return await update_parking( connection,
+            parkingId=parkingId,
+            ownerId=ownerId,
+            data=update_data,
+            filesToDelete=fileToDelete.split(","),
+            newFiles=newFiles
+        )
     except pymysql.Error as e:
         connection.rollback()
         raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
