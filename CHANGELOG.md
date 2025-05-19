@@ -1,3 +1,10 @@
+# v 0.0.5
+* Se modifica la estructura del proyecto, se divide en back y front
+* se crea la clase reservation.py
+* en la clase reservation.py se genera el metodo para realizar una reserva, el cual tiene  manejo de excepciones
+* se genera el api para generar una reserva
+* se crea la clase fileUtils y fileService para manejar la logica de guardado de imagenes y archivos
+
 # v 0.0.4
 * se modifican los metodos de la classe parking.py
 * se agregan dos api, una para eliminar parqueaderoy otra para actualizar parqueadero

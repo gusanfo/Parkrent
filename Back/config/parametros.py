@@ -4,7 +4,9 @@ Descripción: archivo que contiene todas las avriables que se van a utilziar en 
 Autor: Gustavo Sandoval
 Fecha: 2025-04-22
 """
+NFKD = "NFKD"
 UTF8 = "utf-8"
+ASCII = "ascii"
 PASSWORRD_ES = "contrasenia"
 PASSWORD_EN = "password"
 DB_CONECCTION_ERROR = "Error de conexión a la DB"
@@ -40,6 +42,14 @@ BYID = "ById"
 BYOWNER = "ByOwner"
 PARKING = "parking"
 PHOTOS = "fotos"
+DAY_SECONDS = 86400 #segundos que tiene un dia
+DAY_COST =  "costo_dia"
+CLIENT_ID = "id_cliente"
+START_DAY = "fecha_inicio"
+END_DATE = "fecha_fin"
+COST_RESERVATION = "costo"
+DATE_FORMAT = "%Y-%m-%d"
+COUNT = "conteo"
 
 #mensaje
 MESSAGE = "mensaje"
@@ -62,6 +72,7 @@ PATH_GET_PARKING = "/get_parking.php/"
 PATH_GET_PARKING_OWNER = "/get_parkings_by_owner.php/"
 PATH_DELETE_PARKING = "/delete_parking.php/{ownwer_id}/{parking_id}/"
 PATH_UPDATE_PARKING = "/UPDATE_parking.php/"
+PATH_CREATE_RESERVATION = "/new_reservation.php/"
 
 #sqls
 SQL1 = """
@@ -111,3 +122,25 @@ WHERE
     AND dueño = %(owner)s
 """
 SQL_PHOTOS_BY_OWNER_PARKING = "SELECT fotos FROM parqueaderos WHERE id_parqueadero = %s AND dueño = %s"
+
+SQL_CREATE_RESERVATION = """
+INSERT INTO reserva 
+(id_cliente, id_parqueadero, fecha_inicio, fecha_fin, costo) 
+VALUES 
+(%(id_cliente)s, %(parking)s, %(fecha_inicio)s, %(fecha_fin)s, %(costo)s)
+"""
+
+SQL_GET_PARKING_PRICE = """
+SELECT costo_dia FROM parqueaderos 
+WHERE id_parqueadero = %(parking)s
+"""
+
+SQL_CHECK_AVAILABILITY = """
+SELECT COUNT(*) as conteo FROM reserva 
+WHERE id_parqueadero = %(parking)s
+AND (
+    (fecha_inicio BETWEEN %(fecha_inicio)s AND %(fecha_fin)s)
+    OR 
+    (fecha_fin BETWEEN %(fecha_inicio)s AND %(fecha_fin)s)
+)
+"""

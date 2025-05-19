@@ -5,11 +5,13 @@ from routes.createUser import createUser, getUserId
 from routes.place import *
 from routes.login import login
 from routes.parking import *
+from routes.reservation import *
 from config.parametros import *
 from typing import List
+from datetime import datetime
 import pymysql
 
-app = FastAPI(max_upload_size=50_000_000)
+app = FastAPI(max_upload_size=60_000_000) #60MB
 
 # Modelo de datos para el request (usando diccionario, luego puedes usar Pydantic)
 
@@ -18,7 +20,7 @@ def pruebas(idOwner: int = Query(..., alias="owner")):
     connection = get_db_connection()
     fotos = getParkingByOwner(connection, idOwner)
     return {"parqueaderos": fotos}
-
+#En el metodo de crear usuario modificarlo para agregar fotos y que no solo resiva un json sino un formulario
 @app.post(PATH_NEW_USER)
 def crearusuario(user: dict):
     connection = get_db_connection()
@@ -190,7 +192,7 @@ async def delete_parking_endpoint(
     if not connection:
         raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
     try:
-        return await delete_parking(connection,parking_id, ownwer_id)
+        return await deleteParking(connection,parking_id, ownwer_id)
     except pymysql.Error as e:
         connection.rollback()
         raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
@@ -224,12 +226,40 @@ async def update_parking_endpoint(
         print(newFiles)
         print(fileToDelete)
         
-        return await update_parking( connection,
+        return await updateParking( connection,
             parkingId=parkingId,
             ownerId=ownerId,
             data=update_data,
             filesToDelete=fileToDelete.split(","),
             newFiles=newFiles
+        )
+    except pymysql.Error as e:
+        connection.rollback()
+        raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
+    finally:
+        connection.close()
+
+@app.post(PATH_CREATE_RESERVATION)
+async def make_reservation(
+    id_cliente: int = Form(...),
+    id_parqueadero: int = Form(...),
+    fecha_inicio: str = Form(...),  # Formato: "YYYY-MM-DD"
+    fecha_fin: str = Form(...)
+):
+    connection = get_db_connection()
+    if not connection:
+        raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
+    
+    try:
+        # Convertir strings a datetime
+        start = datetime.strptime(fecha_inicio, DATE_FORMAT)
+        end = datetime.strptime(fecha_fin, DATE_FORMAT)
+        
+        return await createReservation(connection,
+            id_cliente,
+            id_parqueadero,
+            start,
+            end
         )
     except pymysql.Error as e:
         connection.rollback()
