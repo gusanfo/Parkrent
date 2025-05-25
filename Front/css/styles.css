@@ -1,0 +1,246 @@
+/* Reseteo básico y fuentes */
+body, h1, h2, h3, p, ul, li, form, input, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif; /* Considera usar una fuente más moderna de Google Fonts */
+}
+
+body {
+    line-height: 1.6;
+    color: #333;
+}
+
+.nav-hide {
+            transform: translateY(-100%);
+            transition: transform 0.3s;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header y Navegación */
+header {
+    background-color: #ffffff; /* Blanco como en la referencia */
+    padding: 1rem 0;
+    border-bottom: 1px solid #e0e0e0; /* Línea sutil como en la referencia */
+    position: sticky; /* Para que se quede fijo arriba (opcional) */
+    top: 0;
+    z-index: 1000;
+}
+
+header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #007bff; /* Un azul, puedes cambiarlo */
+    text-decoration: none;
+}
+
+header ul {
+    list-style: none;
+    display: flex;
+}
+
+header ul li {
+    margin-left: 20px;
+}
+
+header ul li a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+}
+
+header ul li a:hover {
+    color: #007bff;
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 300px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://via.placeholder.com/1920x600.png?text=Fondo+de+Ciudad+o+Parqueadero'); /* Reemplaza con una imagen tuya */
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 6rem 0; /* Más padding vertical que la referencia para destacar */
+    text-align: center;
+}
+
+.hero-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px) brightness(0.7);
+    z-index: 1;
+    transition: background-image 1s;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content h1 {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Espacio entre los elementos del formulario */
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo semi-transparente para el form */
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px; /* Ancho máximo del formulario */
+    margin: 0 auto; /* Centrar el formulario */
+}
+
+.search-form input[type="text"] {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex-grow: 1; /* Para que ocupe el espacio disponible */
+    font-size: 1rem;
+}
+
+.search-form button {
+    padding: 15px 30px;
+    background-color: #007bff; /* Azul principal */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.search-form button:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+}
+
+/* Parkings Section */
+.parkings-section {
+    padding: 4rem 0;
+    text-align: center;
+}
+
+.parkings-section h2 {
+    font-size: 2.2rem;
+    margin-bottom: 3rem;
+    color: #333;
+}
+
+.parking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Rejilla responsive */
+    gap: 2rem; /* Espacio entre los items */
+}
+
+.parking-item {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden; /* Para que la imagen no se salga si es más grande */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.parking-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.parking-item img {
+    width: 100%;
+    height: 200px; /* Altura fija para las imágenes */
+    object-fit: cover; /* Para que la imagen cubra el espacio sin deformarse */
+    display: block;
+}
+
+.parking-item h3 {
+    font-size: 1.4rem;
+    margin: 1rem 1rem 0.5rem 1rem;
+    color: #007bff;
+}
+
+.parking-item p {
+    font-size: 0.95rem;
+    margin: 0 1rem 0.5rem 1rem;
+    color: #555;
+}
+
+.parking-item p strong {
+    color: #28a745; /* Verde para el precio */
+}
+
+
+/* Footer */
+footer {
+    background-color: #333;
+    color: #f4f4f4;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 3rem;
+}
+
+footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Media Queries para Responsividad (muy básico) */
+@media (max-width: 768px) {
+    header nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    header ul {
+        margin-top: 1rem;
+        flex-direction: column;
+        width: 100%;
+    }
+    header ul li {
+        margin-left: 0;
+        margin-bottom: 0.5rem;
+        text-align: center; /* Opcional, para centrar los links en móvil */
+    }
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    .hero-content p {
+        font-size: 1rem;
+    }
+    .search-form {
+        flex-direction: column; /* Apila los elementos del formulario en móvil */
+    }
+    .search-form input[type="text"],
+    .search-form button {
+        width: 100%; /* Ocupan todo el ancho */
+    }
+}

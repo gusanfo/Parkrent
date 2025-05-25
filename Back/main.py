@@ -3,15 +3,24 @@ from typing import Optional, List
 from database import get_db_connection
 from routes.createUser import createUser, getUserId
 from routes.place import *
-from routes.login import login
+from routes.login import login, getUserInfo
 from routes.parking import *
 from routes.reservation import *
 from config.parametros import *
 from typing import List
 from datetime import datetime
 import pymysql
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI(max_upload_size=60_000_000) #60MB
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # O especifica tu frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Modelo de datos para el request (usando diccionario, luego puedes usar Pydantic)
 
@@ -40,7 +49,7 @@ def crearusuario(user: dict):
     finally:
         connection.close()
 #Se podria ajustar a post
-@app.get(PATH_LOGIN)
+@app.post(PATH_LOGIN)
 def loginUser(data: dict):
     connection = get_db_connection()
     if not connection:
@@ -49,8 +58,9 @@ def loginUser(data: dict):
         rsLogin = login(data[PASSWORD_EN], data[EMAIL_EN], connection)
         match rsLogin:
             case (True,True):
-                userId = getUserId(data[EMAIL_EN], connection)[USER_ID]
-                return {MESSAGE: SUCCESSFUL_LOGIN, USER_ID: userId}
+                userInfo = getUserInfo(data[EMAIL_EN], connection)
+                return {MESSAGE: SUCCESSFUL_LOGIN, 
+                        **userInfo}
             case (False,False):
                 return {MESSAGE: EMAIL_DONT_EXIST}
             case _:

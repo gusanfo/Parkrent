@@ -1,3 +1,11 @@
+# v 0.0.6
+* se crea en el backend una metodo para traer la informacion basica del usuario
+* se crea la estructura basica del frontend
+* se genera la pagina inicial de frontend
+* se agregan los css del login y un css de stilos
+* se agrega el javascript del login y del main
+* se agrega el html para realziar el login y se conecta con el backend
+
 # v 0.0.5
 * Se modifica la estructura del proyecto, se divide en back y front
 * se crea la clase reservation.py

@@ -8,27 +8,40 @@ para aplicacion web y movil para rentar parqueaderos
 ## La estructura que poseer el proyecto
  ```
 ├── Back
-|    ├── .env
-|    ├── database.py
-|    ├── main.py
-|    ├── config
-|    |    ├── __init__.py
-|    |    ├── parametros.py
-|    ├── routes
-|    |    ├── __init__.py
-|    |    ├── login.py
-|    |    ├── createUser.py
-|    |    ├── parking.py
-|    |    ├── place.py
-|    |    ├── reservation.py
-|    ├── services/               # Nueva carpeta para lógica de negocio
-|    │    ├── __init__.py
-|    │    ├── fileService.py    # Clase para manejo de archivos
-|    ├── utils/                  # Funciones auxiliares
-|    │    ├── __init__.py
-|    │    ├── fileUtils.py
-|    ├── upload
-|    ├── encrypt
-|    |    ├── __init__.py
-|    |    ├── encryptPass.py
+|   ├── .env
+|   ├── database.py
+|   ├── main.py
+|   ├── config
+|   |   ├── __init__.py
+|   |   ├── parametros.py
+|   ├── routes
+|   |   ├── __init__.py
+|   |   ├── login.py
+|   |   ├── createUser.py
+|   |   ├── parking.py
+|   |   ├── place.py
+|   |   ├── reservation.py
+|   ├── services/               # Nueva carpeta para lógica de negocio
+|   │   ├── __init__.py
+|   │   ├── fileService.py    # Clase para manejo de archivos
+|   ├── utils/                  # Funciones auxiliares
+|   │   ├── __init__.py
+|   │   ├── fileUtils.py
+|   ├── upload
+|   ├── encrypt
+|   |   ├── __init__.py
+|   |   ├── encryptPass.py
+├── Front/
+│   ├── index.html                # Página principal (ubicación privilegiada)
+│   ├── css/                      # CSS directamente en raíz
+│   │   ├── styles.css            # Estilos globales
+│   │   ├── login.css              # Estilos de autenticación
+│   ├── js/                       # JS directamente en raíz
+│   │   ├── login.js               # Lógica de autenticación
+|   ├── assets
+|   │   ├── images/                   # Directorio de imágenes
+│   ├── pages/                    # Resto de páginas HTML
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   ├── dashboard.html        # Ejemplo de otra página
  ``` 

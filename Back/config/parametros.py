@@ -80,6 +80,12 @@ INSERT INTO usuarios (nombre, apellido, correo, contrasenia)
 VALUES (%(username)s, %(lastname)s, %(email)s, %(password)s)
 """
 SQL2 = "SELECT id_usuario from usuarios where correo = %(email)s"
+SQL_USER_INFO = """
+SELECT u.id_usuario, u.nombre, u.apellido, u.foto_perfil, tu.tipo_usuario
+from usuarios u, usuario_tipo t, tipousuario tu
+WHERE u.id_usuario = t.id_usuario
+AND t.id_tipo_usuario = tu.id_tipo_usuario
+AND correo = %(email)s"""
 SQL3 = """INSERT INTO usuario_tipo (id_tipo_usuario , id_usuario)
 VALUES (%(userType)s, %(userId)s)
 """
