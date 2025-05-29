@@ -22,8 +22,11 @@ CREATE TABLE `usuarios` (
   `contrasenia` varchar(255) NOT NULL,
   `foto_perfil` varchar(200)	NULL,
   PRIMARY KEY(id_usuario),
-  UNIQUE kEY usuarios_UIDX1 (correo)
+  KEY usuarios_UIDX1 (correo)
 );
+
+ALTER TABLE `usuarios`
+ADD COLUMN `estado` ENUM('1', '2') NOT NULL DEFAULT '1' COMMENT '1=activo, 2=inactivo';
 
 CREATE TABLE `parqueaderos` (
   `id_parqueadero` BIGINT(30) NOT NULL AUTO_INCREMENT,
@@ -33,6 +36,7 @@ CREATE TABLE `parqueaderos` (
   `largo` double,
   `ancho` double,
   `costo_dia` double NOT NULL,
+  `fotos` JSON DEFAULT NULL COMMENT 'Array de rutas de fotos'
   PRIMARY KEY(id_parqueadero),
   KEY PAR_KEY_DUE (dueño),
   KEY PAR_KEY_UBI (id_ubicacion),
@@ -41,15 +45,16 @@ CREATE TABLE `parqueaderos` (
 );
 
 ALTER TABLE `parqueaderos` 
-ADD COLUMN `fotos` JSON DEFAULT NULL COMMENT 'Array de rutas de fotos';
+ADD COLUMN `estado` ENUM('1', '2') NOT NULL DEFAULT '1' COMMENT '1=activo, 2=inactivo';
 
 CREATE TABLE `reserva` (
   `id_reserva` BIGINT (30) NOT NULL AUTO_INCREMENT,
   `id_cliente` INT(20) NOT NULL,
   `id_parqueadero` BIGINT(30) NOT NULL,
-  `fecha_inicio` timestamp,
-  `fecha_fin` timestamp,
+  `fecha_inicio` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `fecha_fin` timestamp DEFAULT CURRENT_TIMESTAMP,
   `costo` double,
+  `estado` ENUM('1', '2') NOT NULL DEFAULT '1' COMMENT '1=activo, 2=inactivo',
   PRIMARY KEY(id_reserva),
   KEY RES_KEY_CLI (id_cliente),
   KEY RES_KEY_PAR (id_parqueadero),
@@ -66,6 +71,87 @@ CREATE TABLE `usuario_tipo` (
 );
 
 insert into tipoUsuario (`id_tipo_usuario`, `tipo_usuario`) values(1, "customer"), (2, "owner");
+
+CREATE TABLE `borrados` (
+  `nombre_tabla` varchar(50) NOT NULL,
+  `accion` enum('I', 'U', 'D') NOT NULL COMMENT 'I=Insert, U=Update, D=Delete',
+  `usuario` varchar(50),
+  `fecha_accion` date NOT NULL,
+  `id_registro` VARCHAR(50) NULL COMMENT 'ID del registro afectado'
+);
+
+
+DROP TRIGGER IF EXISTS after_usuario_update;
+DROP TRIGGER IF EXISTS after_parqueadero_update;
+DROP TRIGGER IF EXISTS after_reserva_update;
+
+DELIMITER //
+CREATE TRIGGER after_usuario_update
+AFTER UPDATE ON usuarios
+FOR EACH ROW
+BEGIN
+    -- Variables para verificar los tipos de usuario
+    DECLARE es_tipo_cliente BOOLEAN DEFAULT FALSE;
+    DECLARE es_tipo_dueño BOOLEAN DEFAULT FALSE;
+    
+    -- Solo si el usuario cambió de activo (1) a inactivo (2)
+    IF OLD.estado = '1' AND NEW.estado = '2' THEN
+        -- Registrar el cambio del usuario en la tabla borrados
+        INSERT INTO borrados (nombre_tabla, accion, usuario, fecha_accion, id_registro)
+        VALUES ('usuarios', 'U', CURRENT_USER(), CURDATE(), OLD.id_usuario);
+        
+        -- Verificar si el usuario es tipo 1 (cliente)
+        SELECT EXISTS (
+            SELECT 1 FROM usuario_tipo 
+            WHERE id_usuario = NEW.id_usuario AND id_tipo_usuario = 1
+        ) INTO es_tipo_cliente;
+        
+        -- Verificar si el usuario es tipo 2 (dueño)
+        SELECT EXISTS (
+            SELECT 1 FROM usuario_tipo 
+            WHERE id_usuario = NEW.id_usuario AND id_tipo_usuario = 2
+        ) INTO es_tipo_dueño;
+        
+        -- Si es cliente, desactivar sus reservas
+        IF es_tipo_cliente THEN
+            UPDATE reserva
+            SET estado = '2'
+            WHERE id_cliente = OLD.id_usuario AND estado = '1';
+        END IF;
+        
+        -- Si es dueño, desactivar sus parqueaderos
+        IF es_tipo_dueño THEN
+            UPDATE parqueaderos
+            SET estado = '2'
+            WHERE dueño = OLD.id_usuario AND estado = '1';
+        END IF;
+    END IF;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER after_parqueadero_update
+AFTER UPDATE ON parqueaderos
+FOR EACH ROW
+BEGIN
+    IF OLD.estado = '1' AND NEW.estado = '2' THEN
+        INSERT INTO borrados (nombre_tabla, accion, usuario, fecha_accion, id_registro)
+        VALUES ('parqueaderos', 'D', CURRENT_USER(), CURDATE(), OLD.id_parqueadero);
+    END IF;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER after_reserva_update
+AFTER UPDATE ON reserva
+FOR EACH ROW
+BEGIN
+    IF OLD.estado = '1' AND NEW.estado = '2' THEN
+        INSERT INTO borrados (nombre_tabla, accion, usuario, fecha_accion, id_registro)
+        VALUES ('reserva', 'D', CURRENT_USER(), CURDATE(), OLD.id_reserva);
+    END IF;
+END//
+DELIMITER ;
 
 
 INSERT INTO `lugar` (`id_lugar`, `nombre_lugar`, `tipo_ubicacion`, `id_ubicacion_padre`) VALUES

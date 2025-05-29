@@ -11,6 +11,7 @@ from typing import List
 from datetime import datetime
 import pymysql
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 
 app = FastAPI(max_upload_size=60_000_000) #60MB
@@ -21,6 +22,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+#app.mount("/Back/upload", StaticFiles(directory="upload"), name="upload")
 
 # Modelo de datos para el request (usando diccionario, luego puedes usar Pydantic)
 
@@ -37,6 +39,7 @@ def crearusuario(user: dict):
         raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
     try:
         userId = getUserId(user[EMAIL_ES], connection)
+        print(userId)
         if userId is None:
             createUser(connection, user)
             return {MESSAGE: SUCCESSFUL_USER}
@@ -45,10 +48,11 @@ def crearusuario(user: dict):
             
     except pymysql.Error as e:
         connection.rollback()
+        print(e)
         raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
     finally:
         connection.close()
-#Se podria ajustar a post
+
 @app.post(PATH_LOGIN)
 def loginUser(data: dict):
     connection = get_db_connection()
@@ -213,7 +217,6 @@ async def delete_parking_endpoint(
 async def update_parking_endpoint(
     parkingId: int = Form(...),
     ownerId: int = Form(...),
-    place: Optional[int] = Form(None),
     address: Optional[str] = Form(None),
     long: Optional[float] = Form(None),
     width: Optional[float] = Form(None),
@@ -227,7 +230,6 @@ async def update_parking_endpoint(
     
     try:
         update_data = {
-            'place': place,
             'address': address,
             'long': long,
             'width': width,
@@ -263,14 +265,26 @@ async def make_reservation(
     try:
         # Convertir strings a datetime
         start = datetime.strptime(fecha_inicio, DATE_FORMAT)
-        end = datetime.strptime(fecha_fin, DATE_FORMAT)
-        
+        end = datetime.strptime(fecha_fin + FINAL_TIME, TIMESTAMP_FORMAT)
         return await createReservation(connection,
             id_cliente,
             id_parqueadero,
             start,
             end
         )
+    except pymysql.Error as e:
+        connection.rollback()
+        raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
+    finally:
+        connection.close()
+
+@app.get(PATH_GET_RESERVATIONS_OWNER)
+async def get_reservations_by_owner(owner_id: int = Path(..., title="ID del propietario", gt=0)):
+    connection = get_db_connection()
+    if not connection:
+        raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
+    try:
+        return await getReservationsByOwner(connection, owner_id)
     except pymysql.Error as e:
         connection.rollback()
         raise HTTPException(status_code=400, detail=f"Error : {e} revisar")

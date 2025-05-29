@@ -50,6 +50,8 @@ END_DATE = "fecha_fin"
 COST_RESERVATION = "costo"
 DATE_FORMAT = "%Y-%m-%d"
 COUNT = "conteo"
+FINAL_TIME =" 23:59:59"
+TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 #mensaje
 MESSAGE = "mensaje"
@@ -73,19 +75,22 @@ PATH_GET_PARKING_OWNER = "/get_parkings_by_owner.php/"
 PATH_DELETE_PARKING = "/delete_parking.php/{ownwer_id}/{parking_id}/"
 PATH_UPDATE_PARKING = "/UPDATE_parking.php/"
 PATH_CREATE_RESERVATION = "/new_reservation.php/"
+PATH_GET_RESERVATIONS_OWNER = "/get_reservations_by_owner.php/{owner_id}/"
 
 #sqls
 SQL1 = """
 INSERT INTO usuarios (nombre, apellido, correo, contrasenia)
 VALUES (%(username)s, %(lastname)s, %(email)s, %(password)s)
 """
-SQL2 = "SELECT id_usuario from usuarios where correo = %(email)s"
+SQL2 = "SELECT id_usuario from usuarios where correo = %(email)s AND estado = '1'"
 SQL_USER_INFO = """
-SELECT u.id_usuario, u.nombre, u.apellido, u.foto_perfil, tu.tipo_usuario
+SELECT u.id_usuario, u.nombre, u.apellido, u.foto_perfil, GROUP_CONCAT(tu.tipo_usuario) as tipo_usuario
 from usuarios u, usuario_tipo t, tipousuario tu
 WHERE u.id_usuario = t.id_usuario
 AND t.id_tipo_usuario = tu.id_tipo_usuario
-AND correo = %(email)s"""
+AND correo = %(email)s
+GROUP BY u.id_usuario, u.nombre, u.apellido, u.foto_perfil
+"""
 SQL3 = """INSERT INTO usuario_tipo (id_tipo_usuario , id_usuario)
 VALUES (%(userType)s, %(userId)s)
 """
@@ -107,17 +112,21 @@ SQL_PARKINGS = {
                 from parqueaderos where id_parqueadero = %(parking)s""",
     'ByOwner': """SELECT id_parqueadero, id_ubicacion, direccion, largo, ancho, costo_dia, fotos 
                 FROM parqueaderos 
-                WHERE dueño = %(owner)s"""
+                WHERE dueño = %(owner)s
+                AND estado = '1'"""
 }
 SQL_DELETE_PARKING = """
-DELETE FROM parqueaderos 
-WHERE id_parqueadero = %(parking)s
-AND dueño = %(owner)s
+UPDATE parqueaderos 
+SET 
+   estado = '2'
+WHERE 
+    id_parqueadero = %(parking)s 
+    AND dueño = %(owner)s
+
 """
 SQL_UPDATE_PARKING = """
 UPDATE parqueaderos 
 SET 
-    id_ubicacion = %(place)s,
     direccion = %(address)s,
     largo = %(long)s,
     ancho = %(width)s,
@@ -149,4 +158,18 @@ AND (
     OR 
     (fecha_fin BETWEEN %(fecha_inicio)s AND %(fecha_fin)s)
 )
+AND estado = '1'
+"""
+
+SQL_GET_RESERVATION_BY_OWNER = """
+select r.estado, r.id_reserva, r.id_parqueadero, r.fecha_inicio, r.fecha_fin, r.costo
+	, CONCAT(c.nombre, " ", c.apellido) as 'cliente', p.direccion, p.estado as 'estado_parqueadero'
+    FROM reserva r
+        INNER JOIN parqueaderos p
+            ON r.id_parqueadero = p.id_parqueadero
+        INNER JOIN usuarios c
+            ON c.id_usuario = r.id_cliente
+        INNER JOIN usuarios u
+            ON u.id_usuario = p.dueño
+    WHERE u.id_usuario = %(owner)s;
 """

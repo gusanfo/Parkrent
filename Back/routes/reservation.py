@@ -90,3 +90,19 @@ async def createReservation(connection,
             "costo_total": costo,
             "duracion_dias": calculatedDays(startDate, enddate)
         }
+    
+async def getReservationsByOwner(connection, clientId: int):
+    """
+    Obtiene todas las reservas de un propietario
+    Args:
+        connection: conexión a la base de datos
+        clientId: ID del propietario
+    Returns:
+        list: lista de reservas
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(SQL_GET_RESERVATION_BY_OWNER, {
+            "owner": clientId
+        })
+        result = cursor.fetchall()
+        return result

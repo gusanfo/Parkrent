@@ -58,7 +58,6 @@ async def updateParking( connection,
         cursor.execute(SQL_UPDATE_PARKING, {
             PARKING: parkingId,
             OWNER: ownerId,
-            PLACE: data.get(PLACE),
             ADDRESS: data.get(ADDRESS),
             LONG: data.get(LONG),
             WIDTH: data.get(WIDTH),
