@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrarse | ParkRent</title>
+    <link rel="stylesheet" href="../css/register.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header id="mainNav">
+        <nav class="container">
+            <a href="../index.html" class="logo">ParkRent</a>
+            <ul>
+                <li><a href="login.html">Iniciar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="register-section container">
+            <h2>Crear Cuenta</h2>
+            <form id="registerForm" class="register-form">
+                <input type="text" id="registerName" placeholder="Nombre" required>
+                <input type="text" id="registerLastName" placeholder="Apellido" required>
+                <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
+                <input type="password" id="registerPassword" placeholder="Contraseña" required>
+                <select id="registerType" required>
+                    <option value="">Tipo de usuario</option>
+                    <option value="customer">Cliente</option>
+                    <option value="owner">Propietario</option>
+                </select>
+                <button type="submit">Registrarse</button>
+                <p id="registerMessage" class="register-message"></p>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 ParkRent. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    <script src="../js/apiConfig.js"></script>
+    <script src="../js/register.js"></script>
+</body>
+</html>

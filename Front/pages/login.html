@@ -10,9 +10,9 @@
 <body>
     <header id="mainNav">
         <nav class="container">
-            <a href="index.html" class="logo">ParkRent</a>
+            <a href="../index.html" class="logo">ParkRent</a>
             <ul>
-                <li><a href="#">Registrarse</a></li>
+                <li><a href="../pages/register.html">Registrarse</a></li>
             </ul>
         </nav>
     </header>
@@ -36,6 +36,15 @@
             </p>
         </div>
     </footer>
+    <script src="../js/apiConfig.js"></script>
     <script src="../js/login.js"></script>
+    <!-- Modal para seleccionar tipo de usuario -->
+    <div id="userTypeModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>Selecciona tu tipo de usuario</h3>
+            <button id="selectCustomer">Cliente</button>
+            <button id="selectOwner">Propietario</button>
+        </div>
+    </div>
 </body>
 </html>

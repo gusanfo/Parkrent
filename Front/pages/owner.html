@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Propietario | ParkRent</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/owner.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header id="mainNav">
+        <nav class="container">
+            <a href="../index.html" class="logo">ParkRent</a>
+            <ul>
+                <li><a href="owner.html" class="active">Mi Panel</a></li>
+                <li><a href="login.html" onclick="localStorage.clear()">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="owner-section container">
+            <h2 id="ownerName"></h2>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="parkings">Mis Parqueaderos</button>
+                <button class="tab-btn" data-tab="add">Agregar Parqueadero</button>
+                <button class="tab-btn" data-tab="reservations">Reservas</button>
+            </div>
+            <div class="tab-content" id="parkingsTab">
+                <h3>Mis Parqueaderos</h3>
+                <div id="ownerParkings"></div>
+            </div>
+            <div class="tab-content" id="addTab" style="display:none;">
+                <h3>Agregar Parqueadero</h3>
+                <form id="addParkingForm" enctype="multipart/form-data">
+                    <input type="text" id="address" placeholder="Dirección" required>
+                    <input type="number" id="long" placeholder="Largo (m)" step="0.1" required>
+                    <input type="number" id="width" placeholder="Ancho (m)" step="0.1" required>
+                    <input type="number" id="price" placeholder="Precio por día" step="0.01" required>
+                    <select id="countrySelect" required>
+                        <option value="">Selecciona país</option>
+                    </select>
+                    <select id="stateSelect" required disabled>
+                        <option value="">Selecciona estado</option>
+                    </select>
+                    <select id="citySelect" required disabled>
+                        <option value="">Selecciona ciudad</option>
+                    </select>
+                    <input type="file" id="photos" multiple accept="image/*" required>
+                    <button type="submit">Agregar</button>
+                    <p id="addParkingMsg"></p>
+                </form>
+            </div>
+            <div class="tab-content" id="reservationsTab" style="display:none;">
+                <h3>Reservas de mis Parqueaderos</h3>
+                <button id="downloadReservationsCsv" class="edit-parking-btn" style="margin-bottom:1em;">
+                    <span class="material-icons" style="vertical-align:middle;">download</span> Descargar CSV
+                </button>
+                <div id="ownerReservations"></div>
+            </div>
+        </section>
+
+        <!-- Modal para editar parqueadero -->
+        <div id="editParkingModal" class="modal" style="display:none;">
+          <div class="modal-content">
+            <h3 style="color:#007bff; margin-bottom:1rem;">Editar Parqueadero</h3>
+            <form id="editParkingForm" enctype="multipart/form-data">
+              <input type="hidden" id="editParkingId">
+              <label>Dirección
+                <input type="text" id="editAddress" required>
+              </label>
+              <label>Largo (m)
+                <input type="number" id="editLong" step="0.1" required>
+              </label>
+              <label>Ancho (m)
+                <input type="number" id="editWidth" step="0.1" required>
+              </label>
+              <label>Precio por día
+                <input type="number" id="editPrice" step="0.01" required>
+              </label>
+              <div id="editPhotosContainer"></div>
+              <label>Nuevas fotos:
+                <input type="file" id="editNewPhotos" multiple accept="image/*">
+              </label>
+              <button type="submit">Guardar Cambios</button>
+              <button type="button" id="closeEditModal">Cancelar</button>
+              <p id="editParkingMsg"></p>
+            </form>
+          </div>
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 ParkRent. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    <script src="../js/apiConfig.js"></script>
+    <script src="../js/places.js"></script>
+    <script src="../js/reservations.js"></script>
+    <script src="../js/owner.js"></script>
+</body>
+</html>

@@ -6,7 +6,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     message.textContent = 'Procesando...';
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/login.php/', {
+        const response = await fetch(API_ROUTES.LOGIN, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -14,7 +14,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         const data = await response.json();
         if (response.ok && (data.mensaje === "login Correcto!" || data.success)) {
             message.style.color = 'green';
-            //message.textContent = '¡Bienvenido!';
             message.textContent = data.tipo_usuario;
             localStorage.setItem('userId', data.id_usuario);
             localStorage.setItem('userName', data.nombre);
@@ -22,14 +21,23 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             localStorage.setItem('userPhoto', data.foto_perfil);
             localStorage.setItem('userType', data.tipo_usuario);
             localStorage.setItem('userEmail', email);
-            if(data.tipo_usuario === "customer"){
+            console.log(data.tipo_usuario)
+            if(data.tipo_usuario === "customer,owner" || data.tipo_usuario === "owner,customer"){
+                document.getElementById('userTypeModal').style.display = 'flex';
+                document.getElementById('selectCustomer').onclick = function() {
+                    localStorage.setItem('selectedUserType', 'customer');
+                    window.location.href = "customer.html";
+                };
+                document.getElementById('selectOwner').onclick = function() {
+                    localStorage.setItem('selectedUserType', 'owner');
+                    window.location.href = "owner.html";
+                };
+            }
+            else if(data.tipo_usuario === "customer"){
                 window.location.href = "customer.html";
             } else {
                 window.location.href = "owner.html";
             }
-            // Aquí puedes guardar el token o userId si tu backend lo retorna
-            // localStorage.setItem('token', data.token);
-            // window.location.href = "index.html";
         } else {
             message.style.color = '#d32f2f';
             message.textContent = data.mensaje || 'Error al iniciar sesión';

@@ -1,3 +1,11 @@
+# v 0.0.7
+* se avanza con el frontEnd para crear usuario
+* se avanza con la vista frontEnd para los usuarios que son propietarios de parqueaderos, donde esta la lista de parqueaderos, agregar parqueaderos y ver reservas
+* Se puede editar el parqueadero y cambiar sus datos basicos
+* se puede eliminar un parqueadero
+* se ajusta la base de datos para que tenga triggers cuando se "borren" usuarios, parqueaderos o se cancele una reserva
+* Se genera api para traer las reservas que tenga un owner
+
 # v 0.0.6
 * se crea en el backend una metodo para traer la informacion basica del usuario
 * se crea la estructura basica del frontend
