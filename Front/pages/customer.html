@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Parqueaderos | ParkRent</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/customer.css">
+    <link rel="stylesheet" href="../css/owner.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header id="mainNav">
+        <nav class="container">
+            <a href="../index.html" class="logo">ParkRent</a>
+            <ul>
+                <li><a href="customer.html" class="active">Buscar Parqueaderos</a></li>
+                <li><a href="customer_profile.html">Perfil</a></li>
+                <li><a href="customer_reservations.html">Publicar Parqueadero</a></li>
+                <li><a href="login.html" onclick="localStorage.clear()">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="parkings-section container">
+            <h2>Encuentra Parqueaderos en tu Ciudad</h2>
+            <form id="searchForm" class="search-form" style="margin-bottom:2rem;">
+                <select id="countrySelect" required>
+                    <option value="">Selecciona país</option>
+                </select>
+                <select id="stateSelect" required disabled>
+                    <option value="">Selecciona estado</option>
+                </select>
+                <select id="citySelect" required disabled>
+                    <option value="">Selecciona ciudad</option>
+                </select>
+                <button type="submit">
+                    <span class="material-icons" style="vertical-align:middle;">search</span> Buscar
+                </button>
+            </form>
+            <div id="customerParkings" class="parking-grid"></div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 ParkRent. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    <script src="../js/apiConfig.js"></script>
+    <script src="../js/places.js"></script>
+    <script src="../js/customer.js"></script>
+</body>
+</html>

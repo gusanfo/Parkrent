@@ -51,11 +51,14 @@ async def updateParking( connection,
         
         # 3. Añadir nuevas fotos
         if newFiles:
-            new_photo_paths = await savePhotosToDisk(newFiles, ownerId, PHOTOS_PARKING_DIR)
+            pathOwnerParking = str(ownerId) + "/" + str(parkingId)
+            new_photo_paths = await savePhotosToDisk(newFiles, pathOwnerParking, PHOTOS_PARKING_DIR)
             updated_photos.extend(new_photo_paths)
         
+
         # 4. Actualizar en base de datos
         cursor.execute(SQL_UPDATE_PARKING, {
+            DESCRIPTION : data.get(DESCRIPTION),
             PARKING: parkingId,
             OWNER: ownerId,
             ADDRESS: data.get(ADDRESS),
@@ -132,6 +135,10 @@ def getParkingByID(connection, idParking: int):
             }
         )
         res = cursor.fetchone()
+        cursor.execute(SQL_GET_RESERVATION_BY_PARKING, {
+            PARKING: idParking
+        })
+        res["reservations"] = cursor.fetchall()
     return res
 
 async def addParking(connection, data:dict, photosList):
@@ -143,12 +150,14 @@ async def addParking(connection, data:dict, photosList):
     Ejemplo:
         >>> connection = get_conection(()
         >>> data = {"owner":1, "place": 1, "address": "avenida americas..", "long": 7,2, "width": 4, "price": 1500,
-                    "photo": ["parqueadero1/photo1.png"]}
+                description: "parqueadero en el centro", "photo": ["parqueadero1/photo1.png"]}
         >>> createUser(connection, data)
     """
-    photos = await savePhotosToDisk(photosList, data[OWNER], PHOTOS_PARKING_DIR)
+    photos = []
+    print(data)
     with connection.cursor() as cursor:
         cursor.execute(SQL5, {
+            DESCRIPTION: data[DESCRIPTION],
             OWNER: data[OWNER],
             PLACE: data[PLACE],
             ADDRESS: data[ADDRESS],
@@ -158,4 +167,29 @@ async def addParking(connection, data:dict, photosList):
             PHOTO: json.dumps(photos)
             }        
         )
+    # obtener el id del parqueadero insertado
+    parking_id = cursor.lastrowid
+    print(f"Parqueadero creado con ID: {parking_id}")
     connection.commit()
+    parking_data = {
+        DESCRIPTION: data[DESCRIPTION],
+        ADDRESS: data.get(ADDRESS),
+        LONG: data.get(LONG),
+        WIDTH: data.get(WIDTH),
+        PRICE: data.get(PRICE),
+    }
+    await updateParking(connection, parking_id, data[OWNER], parking_data, None, photosList)
+
+
+async def getRandomParkings(connection):
+    """Obtiene un número aleatorio de parqueaderos
+    Args:
+        connection: conexión a la base de datos
+        limit (int): número máximo de parqueaderos a obtener
+    Returns:
+        list: lista de diccionarios con los parqueaderos
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(SQL_GET_RAMDOM_PARKING)
+        res = cursor.fetchall()
+    return res if res else []

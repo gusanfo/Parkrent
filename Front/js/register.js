@@ -5,6 +5,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
     const tipo_usuario = document.getElementById('registerType').value;
+    const cellphone = document.getElementById('registerCellphone').value;
     const message = document.getElementById('registerMessage');
     const userType = (tipo_usuario === 'customer') ? 1 : 2;
     message.textContent = 'Procesando...';
@@ -18,7 +19,8 @@ document.getElementById('registerForm').addEventListener('submit', async functio
                 apellido,
                 correo: email.toLowerCase(),
                 contrasenia: password,
-                tipo: userType
+                tipo: userType,
+                cellphone: cellphone || null
             })
         });
         const data = await response.json();
@@ -37,3 +39,17 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         message.textContent = 'Error de conexión con el servidor';
     }
 });
+
+/*
+// Mostrar/ocultar campo celular según tipo de usuario
+document.getElementById('registerType').addEventListener('change', function() {
+    const cellphoneInput = document.getElementById('registerCellphone');
+    if (this.value === 'owner') {
+        cellphoneInput.style.display = 'block';
+        cellphoneInput.required = true;
+    } else {
+        cellphoneInput.style.display = 'none';
+        cellphoneInput.required = false;
+        cellphoneInput.value = '';
+    }
+});*/

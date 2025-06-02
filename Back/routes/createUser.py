@@ -26,7 +26,8 @@ def createUser(connection, user:dict):
             USER_NAME: user[NAME_ES],
             LASTNAME_EN: user[LASTNAME_ES],
             EMAIL_EN: user[EMAIL_ES],
-            PASSWORD_EN: hashPass}        
+            PASSWORD_EN: hashPass,
+            CELLPHONE: user[CELLPHONE] if CELLPHONE in user else None,}        
         )
     connection.commit()
     userType(user, connection)

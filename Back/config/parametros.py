@@ -17,6 +17,7 @@ NAME_ES = "nombre"
 USER_NAME = "username"
 LASTNAME_ES = "apellido"
 LASTNAME_EN = "lastname"
+CELLPHONE = "cellphone"
 USER_ID = "id_usuario"
 OWNER = "owner"
 PLACE = "place"
@@ -48,10 +49,14 @@ CLIENT_ID = "id_cliente"
 START_DAY = "fecha_inicio"
 END_DATE = "fecha_fin"
 COST_RESERVATION = "costo"
+DESCRIPTION = "description"
 DATE_FORMAT = "%Y-%m-%d"
 COUNT = "conteo"
 FINAL_TIME =" 23:59:59"
 TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
+MAX_WIDTH = 1920  # Ancho máximo en píxeles
+MAX_HEIGHT = 1080  # Alto máximo en píxeles
+QUALITY = 85 # Calidad de la imagen (0-100, donde 100 es la mejor calidad)
 
 #mensaje
 MESSAGE = "mensaje"
@@ -76,11 +81,12 @@ PATH_DELETE_PARKING = "/delete_parking.php/{ownwer_id}/{parking_id}/"
 PATH_UPDATE_PARKING = "/UPDATE_parking.php/"
 PATH_CREATE_RESERVATION = "/new_reservation.php/"
 PATH_GET_RESERVATIONS_OWNER = "/get_reservations_by_owner.php/{owner_id}/"
+PATH_GET_RANDOM_PARKINGS = "/get_random_parkings.php/"
 
 #sqls
 SQL1 = """
-INSERT INTO usuarios (nombre, apellido, correo, contrasenia)
-VALUES (%(username)s, %(lastname)s, %(email)s, %(password)s)
+INSERT INTO usuarios (nombre, apellido, correo, contrasenia, telefono)
+VALUES (%(username)s, %(lastname)s, %(email)s, %(password)s, %(cellphone)s)
 """
 SQL2 = "SELECT id_usuario from usuarios where correo = %(email)s AND estado = '1'"
 SQL_USER_INFO = """
@@ -95,8 +101,8 @@ SQL3 = """INSERT INTO usuario_tipo (id_tipo_usuario , id_usuario)
 VALUES (%(userType)s, %(userId)s)
 """
 SQL4 = "SELECT contrasenia from usuarios where correo = %(email)s"
-SQL5 = """INSERT INTO parqueaderos (dueño, id_ubicacion, direccion, largo, ancho, costo_dia, fotos)
-VALUES (%(owner)s, %(place)s, %(address)s, %(long)s, %(width)s, %(price)s, %(photo)s)
+SQL5 = """INSERT INTO parqueaderos (dueño, id_ubicacion, direccion, largo, ancho, costo_dia, fotos, descripcion)
+VALUES (%(owner)s, %(place)s, %(address)s, %(long)s, %(width)s, %(price)s, %(photo)s, %(description)s)
 """
 SQL_PLACE = {
     'countries': "SELECT id_lugar, nombre_lugar FROM lugar WHERE tipo_ubicacion = %(type)s",
@@ -108,9 +114,11 @@ SQL_PLACE = {
     """
 }
 SQL_PARKINGS = {
-    'ById': """select direccion, largo, ancho, costo_dia, fotos
-                from parqueaderos where id_parqueadero = %(parking)s""",
-    'ByOwner': """SELECT id_parqueadero, id_ubicacion, direccion, largo, ancho, costo_dia, fotos 
+    'ById': """select p.direccion, p.descripcion, p.largo, p.ancho, p.costo_dia, p.fotos, l.nombre_lugar
+                from parqueaderos p, lugar l
+                where p.id_parqueadero = %(parking)s
+                and p.id_ubicacion = l.id_lugar""",
+    'ByOwner': """SELECT id_parqueadero, descripcion, id_ubicacion, direccion, largo, ancho, costo_dia, fotos 
                 FROM parqueaderos 
                 WHERE dueño = %(owner)s
                 AND estado = '1'"""
@@ -128,6 +136,7 @@ SQL_UPDATE_PARKING = """
 UPDATE parqueaderos 
 SET 
     direccion = %(address)s,
+    descripcion = %(description)s,
     largo = %(long)s,
     ancho = %(width)s,
     costo_dia = %(price)s,
@@ -172,4 +181,36 @@ select r.estado, r.id_reserva, r.id_parqueadero, r.fecha_inicio, r.fecha_fin, r.
         INNER JOIN usuarios u
             ON u.id_usuario = p.dueño
     WHERE u.id_usuario = %(owner)s;
+"""
+SQL_GET_RESERVATION_BY_CUSTOMER = """select r.estado, r.id_reserva, r.id_parqueadero, r.fecha_inicio, r.fecha_fin, r.costo
+	,p.direccion, p.estado as 'estado_parqueadero', p.id_parqueadero
+    FROM reserva r
+        INNER JOIN parqueaderos p
+            ON r.id_parqueadero = p.id_parqueadero
+        INNER JOIN usuarios c
+            ON c.id_usuario = r.id_cliente
+        WHERE c.id_usuario = %(userId)s
+        AND r.estado = '1'
+        ORDER BY r.fecha_fin DESC
+        """
+
+SQL_GET_RAMDOM_PARKING = """
+WITH random_parks AS (
+    SELECT id_parqueadero 
+    FROM parqueaderos 
+    WHERE estado = '1'
+    ORDER BY RAND()
+    LIMIT 6
+)
+SELECT p.id_parqueadero, p.direccion, p.largo, p.ancho, p.fotos, p.costo_dia, l.nombre_lugar
+FROM parqueaderos p
+INNER JOIN lugar l ON p.id_ubicacion = l.id_lugar
+INNER JOIN random_parks r ON p.id_parqueadero = r.id_parqueadero
+"""
+
+SQL_GET_RESERVATION_BY_PARKING = """select fecha_inicio, fecha_fin
+	from reserva 
+    where estado = "1"
+    and fecha_fin > CURRENT_DATE-1
+    and id_parqueadero = %(parking)s
 """

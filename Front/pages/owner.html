@@ -34,6 +34,7 @@
                 <h3>Agregar Parqueadero</h3>
                 <form id="addParkingForm" enctype="multipart/form-data">
                     <input type="text" id="address" placeholder="Dirección" required>
+                    <input type="text" id="description" placeholder="Descripción" required>
                     <input type="number" id="long" placeholder="Largo (m)" step="0.1" required>
                     <input type="number" id="width" placeholder="Ancho (m)" step="0.1" required>
                     <input type="number" id="price" placeholder="Precio por día" step="0.01" required>
@@ -77,6 +78,9 @@
               </label>
               <label>Precio por día
                 <input type="number" id="editPrice" step="0.01" required>
+              </label>
+              <label>Descripción
+                <input type="text" id="editDescription" required>
               </label>
               <div id="editPhotosContainer"></div>
               <label>Nuevas fotos:

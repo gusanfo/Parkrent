@@ -11,5 +11,6 @@ const API_ROUTES = {
     UPDATE_PARKING: `${API_BASE}/UPDATE_parking.php/`,
     DELETE_PARKING: (ownerId, parkingId) => `${API_BASE}/delete_parking.php/${ownerId}/${parkingId}`,
     RESERVATIONS_BY_OWNER: (ownerId) => `${API_BASE}/get_reservations_by_owner.php/${ownerId}`,
-    // ...agrega más rutas según tu backend
+    RANDOM_PARKINGS: `${API_BASE}/get_random_parkings.php/`,
+    GET_PARKING: (id) => `${API_BASE}/get_parking.php/?parqueadero=${id}`
 };

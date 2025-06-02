@@ -170,7 +170,7 @@ def getPArkings(idOwner: int = Query(..., alias="owner")):
 
 @app.post(PATH_NEW_PARKING)
 async def createParking(owner: int = Form(...), place: int = Form(...), address: str = Form(...),
-        long: float = Form(...), width: float = Form(...), price: float = Form(...),
+        long: float = Form(...), width: float = Form(...), price: float = Form(...), description: Optional[str] = Form(...),
         files: List[UploadFile] = File(...)):
     connection = get_db_connection()
     if not connection:
@@ -181,7 +181,9 @@ async def createParking(owner: int = Form(...), place: int = Form(...), address:
                 status_code=400,
                 detail="Debe subir al menos una foto del parqueadero"
             )
+        print(description)
         parking_data = {
+            DESCRIPTION: description,
             OWNER: owner,
             PLACE: place,
             ADDRESS: address,
@@ -221,6 +223,7 @@ async def update_parking_endpoint(
     long: Optional[float] = Form(None),
     width: Optional[float] = Form(None),
     price: Optional[float] = Form(None),
+    description: Optional[str] = Form(None),
     fileToDelete: Optional[str] = Form(None),
     newFiles: Optional[List[UploadFile]] = File(None)
 ):
@@ -233,10 +236,9 @@ async def update_parking_endpoint(
             'address': address,
             'long': long,
             'width': width,
-            'price': price
+            'price': price,
+            'description': description
         }
-        print(newFiles)
-        print(fileToDelete)
         
         return await updateParking( connection,
             parkingId=parkingId,
@@ -285,6 +287,19 @@ async def get_reservations_by_owner(owner_id: int = Path(..., title="ID del prop
         raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
     try:
         return await getReservationsByOwner(connection, owner_id)
+    except pymysql.Error as e:
+        connection.rollback()
+        raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
+    finally:
+        connection.close()
+
+@app.get(PATH_GET_RANDOM_PARKINGS)
+async def get_random_parkings():
+    connection = get_db_connection()
+    if not connection:
+        raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
+    try:
+        return await getRandomParkings(connection)
     except pymysql.Error as e:
         connection.rollback()
         raise HTTPException(status_code=400, detail=f"Error : {e} revisar")

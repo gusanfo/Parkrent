@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle Parqueadero | ParkRent</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" />
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/customer.css">
+    <link rel="stylesheet" href="../css/parking_detail.css">
+</head>
+<body>
+    <header id="mainNav">
+        <nav class="container">
+            <a href="../index.html" class="logo">ParkRent</a>
+            <ul>
+                <li><a href="customer.html" class="active">Perfil</a></li>
+                <li><a href="login.html" onclick="localStorage.clear()">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="customer-section container">
+            <div id="parkingDetail"></div>
+        </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+    <script src="../js/apiConfig.js"></script>
+    <script src="../js/parking_detail.js"></script>
+</body>
+</html>

@@ -28,6 +28,8 @@ CREATE TABLE `usuarios` (
 ALTER TABLE `usuarios`
 ADD COLUMN `estado` ENUM('1', '2') NOT NULL DEFAULT '1' COMMENT '1=activo, 2=inactivo';
 
+ALTER TABLE `usuarios` ADD `telefono` VARCHAR(15) NULL;
+
 CREATE TABLE `parqueaderos` (
   `id_parqueadero` BIGINT(30) NOT NULL AUTO_INCREMENT,
   `dueño` INT(20) NOT NULL,
@@ -46,6 +48,7 @@ CREATE TABLE `parqueaderos` (
 
 ALTER TABLE `parqueaderos` 
 ADD COLUMN `estado` ENUM('1', '2') NOT NULL DEFAULT '1' COMMENT '1=activo, 2=inactivo';
+ALTER TABLE `parqueaderos` ADD `descripcion` TEXT NULL;
 
 CREATE TABLE `reserva` (
   `id_reserva` BIGINT (30) NOT NULL AUTO_INCREMENT,

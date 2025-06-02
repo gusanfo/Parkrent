@@ -1,3 +1,10 @@
+# v 0.0.8
+* se avanza con la vista frontEnd de clientes
+* se crea un api para traer 6 parqueaderos que existan de forma aleatoria
+* Se ajusta el api de traer datos del parqueadero para que tambien traiga la ciudad y las reservas que tiene
+* Se genera la vista frontEnd del parqueadero, cuando el cliente selecciona el parqueadero aparecen los datos del parqueadero y un calendario
+* se ajusta el api para crear parqueaderos al momento de guardar parqueaderos
+
 # v 0.0.7
 * se avanza con el frontEnd para crear usuario
 * se avanza con la vista frontEnd para los usuarios que son propietarios de parqueaderos, donde esta la lista de parqueaderos, agregar parqueaderos y ver reservas

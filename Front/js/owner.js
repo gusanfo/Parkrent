@@ -44,6 +44,7 @@ async function loadOwnerParkings() {
                             <img src="${primeraFoto}" alt="Foto parqueadero">
                             <div>
                                 <strong>Dirección:</strong> ${p.direccion}<br>
+                                <strong>Descripción:</strong> ${p.descripcion ? p.descripcion : 'Sin descripción'}<br>
                                 <strong>Dimensiones:</strong> ${p.largo}m x ${p.ancho}m<br>
                                 <strong>Precio/día:</strong> $${p.costo_dia}<br>
                                 <button class="edit-parking-btn" data-id="${p.id_parqueadero}" data-idx="${idx}">
@@ -83,6 +84,7 @@ function openEditModal(idx) {
     const p = currentParkings[idx];
     document.getElementById('editParkingId').value = p.id_parqueadero;
     document.getElementById('editAddress').value = p.direccion;
+    document.getElementById('editDescription').value = p.descripcion || '';
     document.getElementById('editLong').value = p.largo;
     document.getElementById('editWidth').value = p.ancho;
     document.getElementById('editPrice').value = p.costo_dia;
@@ -91,7 +93,7 @@ function openEditModal(idx) {
     let fotos = [];
     try { fotos = JSON.parse(p.fotos); } catch (e) { fotos = []; }
     const container = document.getElementById('editPhotosContainer');
-    container.innerHTML = '<strong>Fotos actuales:</strong><br>';
+    container.innerHTML = '<strong>Fotos a eliminar:</strong><br>';
     fotos.forEach((foto, i) => {
         container.innerHTML += `
             <label>
@@ -119,6 +121,7 @@ document.getElementById('editParkingForm').addEventListener('submit', async func
     const parkingId = document.getElementById('editParkingId').value;
     const ownerId = localStorage.getItem('userId');
     const address = document.getElementById('editAddress').value;
+    const description = document.getElementById('editDescription').value;
     const long = document.getElementById('editLong').value;
     const width = document.getElementById('editWidth').value;
     const price = document.getElementById('editPrice').value;
@@ -133,6 +136,7 @@ document.getElementById('editParkingForm').addEventListener('submit', async func
     formData.append('parkingId', parkingId);
     formData.append('ownerId', ownerId);
     formData.append('address', address);
+    formData.append('description', description);
     formData.append('long', long);
     formData.append('width', width);
     formData.append('price', price);
@@ -203,6 +207,7 @@ document.getElementById('addParkingForm').addEventListener('submit', async funct
     const width = document.getElementById('width').value;
     const price = document.getElementById('price').value;
     const photos = document.getElementById('photos').files;
+    const description = document.getElementById('description').value;
     const msg = document.getElementById('addParkingMsg');
     msg.textContent = 'Procesando...';
 
@@ -212,6 +217,7 @@ document.getElementById('addParkingForm').addEventListener('submit', async funct
     formData.append('long', long);
     formData.append('width', width);
     formData.append('price', price);
+    formData.append('description', description);
     const place = citySelect.value; // o usa el nombre si tu backend lo requiere
     formData.append('place', place);
     for (let i = 0; i < photos.length; i++) {
@@ -227,8 +233,7 @@ document.getElementById('addParkingForm').addEventListener('submit', async funct
         if (res.ok && data.mensaje && data.mensaje.toLowerCase().includes("exitosa")) {
             msg.style.color = 'green';
             msg.textContent = '¡Parqueadero agregado!';
-            loadOwnerParkings();
-            this.reset();
+            window.location.reload();
         } else {
             msg.style.color = '#d32f2f';
             msg.textContent = data.mensaje || 'Error al agregar parqueadero';

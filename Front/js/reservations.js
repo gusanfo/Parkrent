@@ -16,9 +16,7 @@ async function loadOwnerReservations() {
                 const hoy = new Date();
                 const hoyStr = hoy.toISOString().split('T')[0];
 
-                if (r.estado_parqueadero === "2") {
-                    estadoReserva = `<span style="color:#d32f2f;font-weight:bold;">El parqueadero ya no existe</span>`;
-                } else if (r.estado === "2") {
+                if (r.estado === "2") {
                     estadoReserva = `<span style="color:#d32f2f;font-weight:bold;">Reserva fue cancelada</span>`;
                 } else if (fechaFin < hoyStr) {
                     estadoReserva = `<span style="color:#1976d2;font-weight:bold;">Reserva finalizada</span>`;
@@ -56,7 +54,8 @@ function convertReservationsToCsv(reservas) {
         "ID Reserva", "Parqueadero", "Cliente", "Fecha Inicio", "Fecha Fin", "Costo", "Estado Reserva", "Estado Parqueadero", "Fecha Descarga"
     ];
     const rows = reservas.map(r => {
-        const fechaFin = r.fecha_fin.split('T')[0];
+        //const fechaFin = r.fecha_fin.split('T')[0];
+        const fechaFin = r.fecha_fin.replace('T', ' ').split('.')[0]; // Formatear fecha fin
         let estadoReserva = "";
         if (r.estado === "2") {
             estadoReserva = "Cancelada";
@@ -69,7 +68,7 @@ function convertReservationsToCsv(reservas) {
             r.id_reserva,
             r.direccion,
             r.cliente,
-            r.fecha_inicio.split('T')[0],
+            r.fecha_inicio.replace('T', ' ').split('.')[0], // Formatear fecha inicio
             fechaFin,
             r.costo,
             estadoReserva,
