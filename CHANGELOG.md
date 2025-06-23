@@ -1,3 +1,15 @@
+# v0.0.9
+* Se ajusta para que tome las fechas seleccionadas en el calenadario y se pueda realizar una reserva
+* Se Ajusta para que el cliente pueda ver las reservas que tiene
+* Se crea el api para traer la informacion del dueño de acuerdo a un parqueadero
+* se crea el api para traer la informacion de las reservas del cliente
+* se crea el api para poder cancelar la reserva siempre y cuando sean 2 dias antes del dia de inicio
+* Ahora un usuario de tipo propietario se puede volver cliente
+* Ahora un usuario de tipo cliente se puede volver propietario
+* Se agregan terminos y condiciones y politicas de privacidad
+-- por hacer edicion de usuarios, eliminacion de usuarios (si es de ambos tipos decir si eliminar uno, u otro o los dos)
+-- Al crear el usuario pedir aceptar terminos y condiciones y politicas de privacidad
+
 # v 0.0.8
 * se avanza con la vista frontEnd de clientes
 * se crea un api para traer 6 parqueaderos que existan de forma aleatoria

@@ -193,3 +193,16 @@ async def getRandomParkings(connection):
         cursor.execute(SQL_GET_RAMDOM_PARKING)
         res = cursor.fetchall()
     return res if res else []
+
+async def getParkingsByCity(connection, cityId: int):
+    """Obtiene parqueaderos por ciudad
+    Args:
+        connection: conexión a la base de datos
+        cityId (int): ID de la ciudad
+    Returns:
+        list: lista de diccionarios con los parqueaderos
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(SQL_GET_PARKING_BY_CITY, {CITY: cityId})
+        res = cursor.fetchall()
+    return res if res else []

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Reservas | ParkRent</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/customer.css">
+</head>
+<body>
+    <header id="mainNav">
+        <nav class="container">
+            <a href="../index.html" class="logo">ParkRent</a>
+            <ul>
+                <li><a href="customer.html">Buscar Parqueaderos</a></li>
+                <li><a href="customer_profile.html">Perfil</a></li>
+                <li><a href="customer_reservations.html" class="active">Reservas</a></li>
+                <li><a href="login.html" onclick="localStorage.clear()">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="customer-section container">
+            <h2>Mis Reservas</h2>
+            <div id="customerReservations"></div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 ParkRent. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    <script src="../js/apiConfig.js"></script>
+    <script src="../js/reservations.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('customerReservations')) {
+                loadCustomerReservations();
+            }
+        });
+    </script>
+</body>
+</html>

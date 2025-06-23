@@ -45,7 +45,7 @@ async function loadRandomParkings() {
 // Buscar parqueaderos por ciudad seleccionada
 document.getElementById('searchForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    const cityId = document.getElementById('citySelectCustomer').value;
+    const cityId = document.getElementById('citySelect').value;
     const container = document.getElementById('customerParkings');
     container.innerHTML = 'Buscando parqueaderos...';
     if (!cityId) {
@@ -86,3 +86,74 @@ document.getElementById('searchForm').addEventListener('submit', async function(
         container.innerHTML = 'Error al buscar parqueaderos.';
     }
 });
+
+document.getElementById('registrarComoOwnerLink').addEventListener('click', async function(e) {
+    e.preventDefault();
+
+    const userId = localStorage.getItem('userId');
+    const tipoUsuario = localStorage.getItem('userType'); // Ej: "customer,owner" o "owner,customer" o "customer"
+    if (!userId) {
+        alert('Debes iniciar sesión primero.');
+        return;
+    }
+
+    // Si ya es owner, muestra el modal directamente
+    if (
+        tipoUsuario === "customer,owner" ||
+        tipoUsuario === "owner,customer"
+    ) {
+        showOwnerModal();
+        return;
+    }
+
+    // Si no es owner, llama al API para registrar como dueño
+    const formData = new FormData();
+    formData.append('user_id', userId);
+
+    try {
+        const res = await fetch(API_ROUTES.REGISTER_OWNER, {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+
+        if (res.ok && (data.status === "success" || data.mensaje?.toLowerCase().includes("dueño registrado"))) {
+            // Actualiza el tipo de usuario en localStorage
+            localStorage.setItem('userType', 'customer,owner');
+            showOwnerModal();
+        } else {
+            alert(data.mensaje || 'No se pudo registrar como dueño.');
+        }
+    } catch (err) {
+        alert('Error de conexión al registrar como dueño.');
+    }
+});
+
+function showOwnerModal() {
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100vw';
+    modal.style.height = '100vh';
+    modal.style.background = 'rgba(0,0,0,0.5)';
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.zIndex = '9999';
+
+    modal.innerHTML = `
+        <div style="background:#fff; padding:2em 2.5em; border-radius:10px; text-align:center; max-width:90vw;">
+            <h2 style="color:#007bff;">¡Ahora eres dueño!</h2>
+            <p>Ya puedes publicar y administrar tus parqueaderos.</p>
+            <button id="closeOwnerModal" style="margin-top:1.5em; padding:0.7em 2em; background:#007bff; color:#fff; border:none; border-radius:5px; font-weight:bold; font-size:1rem; cursor:pointer;">
+                Ir a mi panel de dueño
+            </button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    document.getElementById('closeOwnerModal').onclick = () => {
+        modal.remove();
+        window.location.href = "owner.html";
+    };
+}

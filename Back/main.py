@@ -1,11 +1,12 @@
 from fastapi import FastAPI, HTTPException, Query, UploadFile, File, Form, Path
 from typing import Optional, List
 from database import get_db_connection
-from routes.createUser import createUser, getUserId
+from routes.createUser import createUser, getUserId, registerLikeCustomerOwner
 from routes.place import *
 from routes.login import login, getUserInfo
 from routes.parking import *
 from routes.reservation import *
+from routes.user import *
 from config.parametros import *
 from typing import List
 from datetime import datetime
@@ -300,6 +301,84 @@ async def get_random_parkings():
         raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
     try:
         return await getRandomParkings(connection)
+    except pymysql.Error as e:
+        connection.rollback()
+        raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
+    finally:
+        connection.close()
+
+@app.get(PATH_OWNER_INFO_BY_PARKING)
+async def get_owner_info_by_parking(parking_id: int = Path(..., title="ID del parqueadero", gt=0)):
+    connection = get_db_connection()
+    if not connection:
+        raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
+    try:
+        return await getOwnerInfoByParking(connection, parking_id)
+    except pymysql.Error as e:
+        connection.rollback()
+        raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
+    finally:
+        connection.close()
+
+@app.get(PATH_RESERVATION_BY_CUSTOMER)
+async def get_reservations_by_client(client_id: int = Path(..., title="ID del cliente", gt=0)):
+    connection = get_db_connection()
+    if not connection:
+        raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
+    try:
+        return await getReservationsByClient(connection, client_id)
+    except pymysql.Error as e:
+        connection.rollback()
+        raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
+    finally:
+        connection.close()
+
+@app.delete(PATH_DELETE_RESERVATION)
+async def delete_reservation(reservation_id: int = Path(..., title="ID de la reserva", gt=0)):
+    connection = get_db_connection()
+    if not connection:
+        raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
+    try:
+        return await deleteReservation(connection, reservation_id)
+    except pymysql.Error as e:
+        connection.rollback()
+        raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
+    finally:
+        connection.close()
+
+@app.get(PATH_GET_PARKING_BY_CITY)
+async def get_parking_by_city(city: int = Path(..., title="ID de la ciudad", gt=0)):
+    connection = get_db_connection()
+    if not connection:
+        raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
+    try:
+        return await getParkingsByCity(connection, city)
+    except pymysql.Error as e:
+        connection.rollback()
+        raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
+    finally:
+        connection.close()
+
+@app.post(PATH_REGISTER_CLIENT)
+async def register_client(user_id: int = Form(...) ):
+    connection = get_db_connection()
+    if not connection:
+        raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
+    try:
+        return await registerLikeCustomerOwner(user_id, 1, connection)
+    except pymysql.Error as e:
+        connection.rollback()
+        raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
+    finally:
+        connection.close()
+
+@app.post(PATH_REGISTER_OWNER)
+async def register_owner(user_id: int = Form(...) ):
+    connection = get_db_connection()
+    if not connection:
+        raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
+    try:
+        return await registerLikeCustomerOwner(user_id, 2, connection)
     except pymysql.Error as e:
         connection.rollback()
         raise HTTPException(status_code=400, detail=f"Error : {e} revisar")

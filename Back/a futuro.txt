@@ -1,5 +1,6 @@
 en proximas versiones, ajustar para en la creacion de usuario subir foto, agregar metodo para editar usuario
-        Agregar metodo donde traigan en los parqueaderos las resrrvas qeu tiene
+
+Agregar metodo para enviar correos, smtp-> mirar
 
 
 agregar valdacion con pydantic

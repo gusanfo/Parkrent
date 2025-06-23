@@ -64,3 +64,18 @@ def userType(user:dict, connection):
             USER_ID_EN: userId} 
         )
     connection.commit()
+
+async def registerLikeCustomerOwner(user, userType, connection):
+    """registra un usuario como cliente o propietario
+    Args:
+        user: ide del usuario
+        userType: tipo de usuario (cliente o propietario)
+        connection: conexion a la base de datos que este abierta.
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(SQL_REGISTER_CLIENTOWNER, {
+            USER_ID_EN: user,
+            USER_TYPE_EN: userType
+        })
+        connection.commit()
+    return {MESSAGE: "dueño registrado"} if userType == 2 else {MESSAGE: "cliente registrado"}

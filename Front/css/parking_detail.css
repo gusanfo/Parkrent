@@ -158,3 +158,17 @@
     font-weight: bold;
     opacity: 1 !important;
 }
+
+#calendarFallback input[type="date"] {
+    padding: 0.7em;
+    border: 1px solid #b0b8c1;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin: 0.5em 0;
+}
+#calendarFallback label {
+    display: block;
+    margin-bottom: 0.5em;
+    color: #333;
+    font-weight: 500;
+}

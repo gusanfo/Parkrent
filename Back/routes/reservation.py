@@ -91,7 +91,7 @@ async def createReservation(connection,
             "duracion_dias": calculatedDays(startDate, enddate)
         }
     
-async def getReservationsByOwner(connection, clientId: int):
+async def getReservationsByOwner(connection, ownerId: int):
     """
     Obtiene todas las reservas de un propietario
     Args:
@@ -102,7 +102,44 @@ async def getReservationsByOwner(connection, clientId: int):
     """
     with connection.cursor() as cursor:
         cursor.execute(SQL_GET_RESERVATION_BY_OWNER, {
-            "owner": clientId
+            OWNER: ownerId
         })
         result = cursor.fetchall()
         return result
+    
+async def getReservationsByClient(connection, clientId: int):
+    """
+    Obtiene todas las reservas de un cliente
+    Args:
+        connection: conexión a la base de datos
+        clientId: ID del cliente
+    Returns:
+        list: lista de reservas
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(SQL_GET_RESERVATION_BY_CUSTOMER, {
+            USER_ID_EN: clientId
+        })
+        result = cursor.fetchall()
+        return result
+
+async def deleteReservation(connection, reservationId: int):
+    """
+    Elimina una reserva por ID
+    Args:
+        connection: conexión a la base de datos
+        reservationId: ID de la reserva
+    Returns:
+        dict: estado de la operación
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(SQL_DELETE_RESERVATION, {
+            RESERVATION: reservationId
+        })
+        if cursor.rowcount == 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Reserva no encontrada"
+            )
+        connection.commit()
+        return {"status": "success", "message": "Reserva eliminada correctamente"}

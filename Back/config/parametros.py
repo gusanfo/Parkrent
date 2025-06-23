@@ -43,6 +43,7 @@ BYID = "ById"
 BYOWNER = "ByOwner"
 PARKING = "parking"
 PHOTOS = "fotos"
+CITY = "city"
 DAY_SECONDS = 86400 #segundos que tiene un dia
 DAY_COST =  "costo_dia"
 CLIENT_ID = "id_cliente"
@@ -54,6 +55,7 @@ DATE_FORMAT = "%Y-%m-%d"
 COUNT = "conteo"
 FINAL_TIME =" 23:59:59"
 TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
+RESERVATION = "reservation"
 MAX_WIDTH = 1920  # Ancho máximo en píxeles
 MAX_HEIGHT = 1080  # Alto máximo en píxeles
 QUALITY = 85 # Calidad de la imagen (0-100, donde 100 es la mejor calidad)
@@ -81,7 +83,13 @@ PATH_DELETE_PARKING = "/delete_parking.php/{ownwer_id}/{parking_id}/"
 PATH_UPDATE_PARKING = "/UPDATE_parking.php/"
 PATH_CREATE_RESERVATION = "/new_reservation.php/"
 PATH_GET_RESERVATIONS_OWNER = "/get_reservations_by_owner.php/{owner_id}/"
+PATH_RESERVATION_BY_CUSTOMER = "/get_reservations_by_customer.php/{client_id}/"
 PATH_GET_RANDOM_PARKINGS = "/get_random_parkings.php/"
+PATH_OWNER_INFO_BY_PARKING = "/get_owner_info_by_parking.php/{parking_id}/"
+PATH_DELETE_RESERVATION = "/delete_reservation.php/{reservation_id}/"
+PATH_GET_PARKING_BY_CITY = "/get_parkings_by_city.php/{city}/"
+PATH_REGISTER_CLIENT = "/register_client.php/"
+PATH_REGISTER_OWNER = "/register_owner.php/"
 
 #sqls
 SQL1 = """
@@ -130,7 +138,6 @@ SET
 WHERE 
     id_parqueadero = %(parking)s 
     AND dueño = %(owner)s
-
 """
 SQL_UPDATE_PARKING = """
 UPDATE parqueaderos 
@@ -172,7 +179,7 @@ AND estado = '1'
 
 SQL_GET_RESERVATION_BY_OWNER = """
 select r.estado, r.id_reserva, r.id_parqueadero, r.fecha_inicio, r.fecha_fin, r.costo
-	, CONCAT(c.nombre, " ", c.apellido) as 'cliente', p.direccion, p.estado as 'estado_parqueadero'
+	, CONCAT(c.nombre, " ", c.apellido) as 'cliente', p.direccion, p.estado as 'estado_parqueadero', c.telefono as telefono_cliente
     FROM reserva r
         INNER JOIN parqueaderos p
             ON r.id_parqueadero = p.id_parqueadero
@@ -180,15 +187,18 @@ select r.estado, r.id_reserva, r.id_parqueadero, r.fecha_inicio, r.fecha_fin, r.
             ON c.id_usuario = r.id_cliente
         INNER JOIN usuarios u
             ON u.id_usuario = p.dueño
-    WHERE u.id_usuario = %(owner)s;
+    WHERE u.id_usuario = %(owner)s
+    order by r.estado asc, r.fecha_fin desc
 """
 SQL_GET_RESERVATION_BY_CUSTOMER = """select r.estado, r.id_reserva, r.id_parqueadero, r.fecha_inicio, r.fecha_fin, r.costo
-	,p.direccion, p.estado as 'estado_parqueadero', p.id_parqueadero
+	,p.direccion, p.estado as 'estado_parqueadero', p.id_parqueadero, CONCAT(d.nombre, " ", d.apellido) as dueño, d.telefono
     FROM reserva r
         INNER JOIN parqueaderos p
             ON r.id_parqueadero = p.id_parqueadero
         INNER JOIN usuarios c
             ON c.id_usuario = r.id_cliente
+        INNER JOIN usuarios d
+        	ON d.id_usuario = p.dueño
         WHERE c.id_usuario = %(userId)s
         AND r.estado = '1'
         ORDER BY r.fecha_fin DESC
@@ -200,7 +210,7 @@ WITH random_parks AS (
     FROM parqueaderos 
     WHERE estado = '1'
     ORDER BY RAND()
-    LIMIT 6
+    LIMIT 18
 )
 SELECT p.id_parqueadero, p.direccion, p.largo, p.ancho, p.fotos, p.costo_dia, l.nombre_lugar
 FROM parqueaderos p
@@ -213,4 +223,29 @@ SQL_GET_RESERVATION_BY_PARKING = """select fecha_inicio, fecha_fin
     where estado = "1"
     and fecha_fin > CURRENT_DATE-1
     and id_parqueadero = %(parking)s
+"""
+
+SQL_GET_OWNER_INFO_BY_PARKING = """SELECT 
+CONCAT(u.nombre, " ", u.apellido) as dueño, u.telefono, p.direccion 
+FROM `parqueaderos` p, usuarios u
+where u.id_usuario = p.dueño
+and p.id_parqueadero = %(parking)s
+"""
+
+SQL_DELETE_RESERVATION = """
+UPDATE reserva
+SET
+   estado = '2'
+WHERE id_reserva = %(reservation)s 
+"""
+
+SQL_GET_PARKING_BY_CITY = """SELECT p.id_parqueadero, p.direccion, p.largo, p.ancho, p.fotos, p.costo_dia, l.nombre_lugar
+FROM parqueaderos p
+INNER JOIN lugar l ON p.id_ubicacion = l.id_lugar
+WHERE l.id_lugar = %(city)s
+AND p.estado = '1'
+"""
+
+SQL_REGISTER_CLIENTOWNER = """INSERT INTO usuario_tipo (id_tipo_usuario, id_usuario) 
+VALUES (%(userType)s, %(userId)s)
 """

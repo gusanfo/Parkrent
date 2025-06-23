@@ -21,14 +21,12 @@ CREATE TABLE `usuarios` (
   `correo` varchar(255) NOT NULL,
   `contrasenia` varchar(255) NOT NULL,
   `foto_perfil` varchar(200)	NULL,
+  `estado` ENUM('1', '2') NOT NULL DEFAULT '1' COMMENT '1=activo, 2=inactivo',
+  `telefono` VARCHAR(15) NULL,
   PRIMARY KEY(id_usuario),
   KEY usuarios_UIDX1 (correo)
 );
 
-ALTER TABLE `usuarios`
-ADD COLUMN `estado` ENUM('1', '2') NOT NULL DEFAULT '1' COMMENT '1=activo, 2=inactivo';
-
-ALTER TABLE `usuarios` ADD `telefono` VARCHAR(15) NULL;
 
 CREATE TABLE `parqueaderos` (
   `id_parqueadero` BIGINT(30) NOT NULL AUTO_INCREMENT,
@@ -38,7 +36,9 @@ CREATE TABLE `parqueaderos` (
   `largo` double,
   `ancho` double,
   `costo_dia` double NOT NULL,
-  `fotos` JSON DEFAULT NULL COMMENT 'Array de rutas de fotos'
+  `fotos` JSON DEFAULT NULL COMMENT 'Array de rutas de fotos',
+  `estado` ENUM('1', '2') NOT NULL DEFAULT '1' COMMENT '1=activo, 2=inactivo',
+  `descripcion` TEXT NULL,
   PRIMARY KEY(id_parqueadero),
   KEY PAR_KEY_DUE (dueño),
   KEY PAR_KEY_UBI (id_ubicacion),
@@ -46,9 +46,6 @@ CREATE TABLE `parqueaderos` (
   CONSTRAINT PAR_fk_DUE FOREIGN KEY (dueño) references usuarios(id_usuario)
 );
 
-ALTER TABLE `parqueaderos` 
-ADD COLUMN `estado` ENUM('1', '2') NOT NULL DEFAULT '1' COMMENT '1=activo, 2=inactivo';
-ALTER TABLE `parqueaderos` ADD `descripcion` TEXT NULL;
 
 CREATE TABLE `reserva` (
   `id_reserva` BIGINT (30) NOT NULL AUTO_INCREMENT,

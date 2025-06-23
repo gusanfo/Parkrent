@@ -10,6 +10,13 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const userType = (tipo_usuario === 'customer') ? 1 : 2;
     message.textContent = 'Procesando...';
 
+    // Validación: si es propietario, el celular es obligatorio
+    if (tipo_usuario === 'owner' && (!cellphone || cellphone.trim().length < 7)) {
+        message.style.color = '#d32f2f';
+        message.textContent = 'El número de celular es obligatorio para propietarios.';
+        return;
+    }
+
     try {
         const response = await fetch(API_ROUTES.REGISTER, {
             method: 'POST',
