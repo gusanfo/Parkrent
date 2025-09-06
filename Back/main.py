@@ -43,6 +43,7 @@ def crearusuario(user: dict):
         print(userId)
         if userId is None:
             createUser(connection, user)
+            ##AQUI lo del correo de creacion de cuenta
             return {MESSAGE: SUCCESSFUL_USER}
         else:
             return {MESSAGE: EMAIL_EXIST}
@@ -379,6 +380,29 @@ async def register_owner(user_id: int = Form(...) ):
         raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
     try:
         return await registerLikeCustomerOwner(user_id, 2, connection)
+    except pymysql.Error as e:
+        connection.rollback()
+        raise HTTPException(status_code=400, detail=f"Error : {e} revisar")
+    finally:
+        connection.close()
+
+@app.patch(PATH_UPDATE_USER_INFO)
+async def update_user_info(
+    userId: int = Form(...),
+    userName: str = Form(...),
+    lastName: str = Form(...),
+    password: str = Form(...),
+    cellphone: str = Form(...)
+):
+    connection = get_db_connection()
+    if not connection:
+        raise HTTPException(status_code=500, detail=DB_CONECCTION_ERROR)
+    
+    try:
+        print("Datos")
+        print(password)
+        password = password if password else ''
+        return await updateUserInfo(connection, userId, userName, lastName, password, cellphone)
     except pymysql.Error as e:
         connection.rollback()
         raise HTTPException(status_code=400, detail=f"Error : {e} revisar")

@@ -20,6 +20,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             localStorage.setItem('userLastName', data.apellido);
             localStorage.setItem('userPhoto', data.foto_perfil);
             localStorage.setItem('userType', data.tipo_usuario);
+            localStorage.setItem('userCellphone', data.telefono);
             localStorage.setItem('userEmail', email);
             console.log(data.tipo_usuario)
             if(data.tipo_usuario === "customer,owner" || data.tipo_usuario === "owner,customer"){

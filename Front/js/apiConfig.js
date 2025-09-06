@@ -19,5 +19,6 @@ const API_ROUTES = {
     GET_OWNER_INFO_BY_PARKING: (parkingId) => `${API_BASE}/get_owner_info_by_parking.php/${parkingId}/`,
     PARKINGS_BY_CITY: (cityId) => `${API_BASE}/get_parkings_by_city.php/${cityId}`,
     REGISTER_CLIENT: `${API_BASE}/register_client.php/`,
-    REGISTER_OWNER: `${API_BASE}/register_owner.php/`
+    REGISTER_OWNER: `${API_BASE}/register_owner.php/`,
+    UPDATE_USER_INFO: `${API_BASE}/update_user_info.php/`
 };

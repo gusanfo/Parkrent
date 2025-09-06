@@ -1,0 +1,112 @@
+body {
+    background: #f8f9fa;
+}
+.profile-container {
+    max-width: 500px;
+    margin: 2em auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    padding: 2.5em 2em;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #222;
+}
+.profile-container h2 {
+    color: #007bff;
+    margin-bottom: 1em;
+    text-align: center;
+}
+.profile-container label {
+    display: block;
+    margin-top: 1em;
+    font-weight: 500;
+}
+.profile-container input,
+.profile-container select {
+    width: 100%;
+    padding: 0.7em;
+    margin-top: 0.3em;
+    border: 1px solid #b0b8c1;
+    border-radius: 4px;
+    font-size: 1em;
+}
+.profile-container button {
+    margin-top: 2em;
+    width: 100%;
+    padding: 0.9em;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer;
+}
+.profile-container .info-msg {
+    margin-top: 1em;
+    text-align: center;
+    min-height: 1.5em;
+}
+@media (max-width: 600px) {
+    .profile-container {
+        padding: 1.2em 0.7em;
+    }
+}
+
+/* Custom Checkbox Styles */
+.custom-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    position: relative;
+    padding-left: 28px;
+    cursor: pointer;
+    font-size: 1em;
+    user-select: none;
+}
+
+.custom-check input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.custom-check .checkmark {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 20px;
+    width: 20px;
+    background-color: #f1f1f1;
+    border: 2px solid #007bff;
+    border-radius: 4px;
+    transition: background 0.2s, border 0.2s;
+}
+
+.custom-check input:checked ~ .checkmark {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.custom-check .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.custom-check input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.custom-check .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 12px;
+    border: solid #fff;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}

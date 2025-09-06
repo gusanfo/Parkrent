@@ -34,3 +34,45 @@
     min-height: 1.5em;
     text-align: center;
 }
+
+/* Modal general */
+.modal {
+  position: fixed;
+  z-index: 9999;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.5);
+  display: none; /* Se muestra con display:flex cuando se activa */
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 2rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  min-width: 300px;
+  max-width: 95vw;
+  width: 100%;
+  text-align: center;
+}
+
+.modal-content h3 {
+  margin-bottom: 1em;
+}
+
+.modal-content button {
+  margin-top: 1em;
+  padding: 0.7em 2em;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background: #0056b3;
+}

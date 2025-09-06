@@ -30,6 +30,11 @@
                     <option value="customer">Cliente</option>
                     <option value="owner">Propietario</option>
                 </select>
+                <label class="custom-check" style="margin-top:1em;">
+                    <input type="checkbox" id="acceptTerms">
+                    <span class="checkmark"></span>
+                    Acepto los <a href="terminos.html" target="_blank">Términos y Condiciones</a> y la <a href="privacidad.html" target="_blank">Política de Privacidad</a>
+                </label>
                 <button type="submit">Registrarse</button>
                 <p id="registerMessage" class="register-message"></p>
             </form>
@@ -40,6 +45,13 @@
             <p>&copy; 2025 ParkRent. Todos los derechos reservados.</p>
         </div>
     </footer>
+    <div id="termsModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:400px;text-align:center;">
+            <h3 style="color:#d32f2f;">Debes aceptar los Términos y Condiciones</h3>
+            <p>Para crear una cuenta, es necesario aceptar los Términos y la Política de Privacidad.</p>
+            <button id="closeTermsModal" style="margin-top:1em;padding:0.5em 2em;background:#007bff;color:#fff;border:none;border-radius:5px;font-weight:bold;">Cerrar</button>
+        </div>
+    </div>
     <script src="../js/apiConfig.js"></script>
     <script src="../js/register.js"></script>
 </body>

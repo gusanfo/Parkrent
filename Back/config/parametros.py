@@ -90,6 +90,7 @@ PATH_DELETE_RESERVATION = "/delete_reservation.php/{reservation_id}/"
 PATH_GET_PARKING_BY_CITY = "/get_parkings_by_city.php/{city}/"
 PATH_REGISTER_CLIENT = "/register_client.php/"
 PATH_REGISTER_OWNER = "/register_owner.php/"
+PATH_UPDATE_USER_INFO = "/update_user_info.php/"
 
 #sqls
 SQL1 = """
@@ -98,7 +99,7 @@ VALUES (%(username)s, %(lastname)s, %(email)s, %(password)s, %(cellphone)s)
 """
 SQL2 = "SELECT id_usuario from usuarios where correo = %(email)s AND estado = '1'"
 SQL_USER_INFO = """
-SELECT u.id_usuario, u.nombre, u.apellido, u.foto_perfil, GROUP_CONCAT(tu.tipo_usuario) as tipo_usuario
+SELECT u.id_usuario, u.nombre, u.apellido, u.foto_perfil, u.telefono, GROUP_CONCAT(tu.tipo_usuario) as tipo_usuario
 from usuarios u, usuario_tipo t, tipousuario tu
 WHERE u.id_usuario = t.id_usuario
 AND t.id_tipo_usuario = tu.id_tipo_usuario
@@ -232,6 +233,14 @@ where u.id_usuario = p.dueño
 and p.id_parqueadero = %(parking)s
 """
 
+SQL_GET_RESERVATION_BY_ID = """SELECT r.id_reserva, r.fecha_inicio,r.fecha_fin, CONCAT(c.nombre," ", c.apellido ) as cliente, c.correo as correoCliente,
+    p.direccion, CONCAT(d.nombre, " ", d.apellido) as owner, d.telefono, d.correo as correoOwner
+FROM reserva r
+INNER JOIN usuarios c ON c.id_usuario = r.id_cliente
+INNER JOIN parqueaderos p ON p.id_parqueadero = r.id_parqueadero
+INNER JOIN usuarios d ON p.dueño = d.id_usuario
+WHERE r.id_reserva = %(reservation)s"""
+
 SQL_DELETE_RESERVATION = """
 UPDATE reserva
 SET
@@ -249,3 +258,90 @@ AND p.estado = '1'
 SQL_REGISTER_CLIENTOWNER = """INSERT INTO usuario_tipo (id_tipo_usuario, id_usuario) 
 VALUES (%(userType)s, %(userId)s)
 """
+
+SQL_UPDATE_USER_INFO1 = """UPDATE usuarios
+SET 
+    nombre = %(username)s,
+    apellido = %(lastname)s,
+    contrasenia = %(password)s,
+    telefono = %(cellphone)s 
+WHERE id_usuario = %(userId)s
+"""
+SQL_UPDATE_USER_INFO2 = """UPDATE usuarios
+SET 
+    nombre = %(username)s,
+    apellido = %(lastname)s,
+    telefono = %(cellphone)s 
+WHERE id_usuario = %(userId)s
+"""
+
+HTML_REGISTER = """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bienvenido</title>
+</head>
+<body>
+    <h1>¡Bienvenido, {username}  {lastname}!</h1>
+    <p>Gracias por registrarte en nuestra plataforma, desde ahora podrás disfrutar de nuestros servicios.</p>
+
+    <p> Nota: no responder a este correo, este correo es solo informativo</p>
+    <p>Saludos,</p>
+    <p>El equipo de Parkrent</p>
+
+    <h3> PARKRENT</h3>
+</body>
+</html>
+"""
+
+HTML_RESERVATION_CONFIRMATION_CUSTOMER = """<!DOCTYPE html>
+<html>
+<head>
+    <title>RESERVATION</title>
+</head>
+<body>
+    <h1>Reserva confirmada</h1>
+    <p>Gracias por confiar en nosotros para tu reserva.</p>
+    <p>Detalles de la reserva:</p>
+    <ul>
+        <li>ID de reserva: {reservation_id}</li>
+        <li>Fecha de inicio: {startDate}</li>
+        <li>Fecha de fin: {endDate}</li>
+        <li>Dueño: {owner}</li>
+        <li>Dirección: {address}</li>
+        <li>Teléfono de contacto: {phone}</li>
+    </ul>
+
+    <p> Nota: no responder a este correo, este correo es solo informativo</p>
+    <p>Saludos,</p>
+    <p>El equipo de Parkrent</p>
+
+    <h3> PARKRENT</h3>
+</body>
+</html>"""
+
+
+HTML_RESERVATION_CONFIRMATION_OWNER = """<!DOCTYPE html>
+<html>
+<head>
+    <title>RESERVATION</title>
+</head>
+<body>
+    <h1>Reserva confirmada</h1>
+    <p>Tu parqueadero ha sido reservado</p>
+    <p>Detalles de la reserva:</p>
+    <ul>
+        <li>ID de reserva: {reservation_id}</li>
+        <li>Fecha de inicio: {startDate}</li>
+        <li>Fecha de fin: {endDate}</li>
+        <li>Cliente: {customer}</li>
+        <li>Parqueadero reservado: {address}</li>
+    </ul>
+
+    <p> Nota: no responder a este correo, este correo es solo informativo</p>
+    <p>Saludos,</p>
+    <p>El equipo de Parkrent</p>
+
+    <h3> PARKRENT</h3>
+</body>
+</html>"""

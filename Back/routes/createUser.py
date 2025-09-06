@@ -9,6 +9,7 @@ Dependencias:
 
 from encrypt.encryptPass import encrypt
 from config.parametros import *
+from services.emails import sendEmail
 
 def createUser(connection, user:dict):
     """crea un registro en usuarios
@@ -31,6 +32,16 @@ def createUser(connection, user:dict):
         )
     connection.commit()
     userType(user, connection)
+    ## AQUI se puede agregar el envio de correo de bienvenida o confirmacion de registro
+    sendEmail(
+        to=user[EMAIL_ES],
+        subject="Bienvenido a Parkrent",
+        body=HTML_REGISTER.format(
+            username=user[NAME_ES],
+            lastname=user[LASTNAME_ES]
+        )
+    )
+
     
 
 def getUserId(email:str, connection)-> dict:

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Perfil | ParkRent</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/perfil.css">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">ParkRent</a>
+            <ul>
+                <li id="navCustomer" style="display:none;"><a href="customer.html">Buscar Parqueaderos</a></li>
+                <li id="navOwner" style="display:none;"><a href="owner.html">Panel Propietario</a></li>
+                <li><a href="perfil.html" class="active">Perfil</a></li>
+                <li><a href="login.html" onclick="localStorage.clear()">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="profile-container">
+            <h2>Mi Perfil</h2>
+            <label class="custom-check">
+                <input type="checkbox" id="editProfileCheck"> Editar información
+                <span class="checkmark"></span>
+            </label>
+            <form id="profileForm">
+                <label>Nombre
+                    <input type="text" id="profileName" required disabled>
+                </label>
+                <label>Apellido
+                    <input type="text" id="profileLastName" required disabled>
+                </label>
+                <label>Correo electrónico
+                    <input type="email" id="profileEmail" required disabled>
+                </label>
+                <label>Celular
+                    <input type="tel" id="profileCellphone" pattern="[0-9]{7,15}" disabled>
+                </label>
+                <label class="custom-check">
+                    <input type="checkbox" id="editPasswordCheck" disabled> Modificar contraseña
+                    <span class="checkmark"></span>
+                </label>
+                <div id="passwordFields" style="display:none;">
+                    <label>Nueva contraseña
+                        <input type="password" id="profilePassword" disabled>
+                    </label>
+                    <label>Confirmar contraseña
+                        <input type="password" id="profilePasswordConfirm" disabled>
+                    </label>
+                </div>
+                <button type="submit" id="saveProfileBtn" disabled>Guardar Cambios</button>
+                <div class="info-msg" id="profileMsg"></div>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 ParkRent. Todos los derechos reservados.</p>
+            <p>
+                <a href="privacidad.html">Política de Privacidad</a> |
+                <a href="terminos.html">Términos y Condiciones</a>
+            </p>
+        </div>
+    </footer>
+    <script src="../js/apiConfig.js"></script>
+    <script src="../js/perfil.js"></script>
+</body>
+</html>

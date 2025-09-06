@@ -1,3 +1,8 @@
+# v0.0.10
+* Se puede actualziar la info de los usuarios
+* Al crear cuenta se deben aceptar los terminos y condiciones
+ajustar para que cuando se cree un usuario se envie un correo
+
 # v0.0.9
 * Se ajusta para que tome las fechas seleccionadas en el calenadario y se pueda realizar una reserva
 * Se Ajusta para que el cliente pueda ver las reservas que tiene

@@ -1,5 +1,10 @@
 document.getElementById('registerForm').addEventListener('submit', async function(e) {
     e.preventDefault();
+    const acceptTerms = document.getElementById('acceptTerms');
+    if (!acceptTerms.checked) {
+        document.getElementById('termsModal').style.display = 'flex';
+        return;
+    }
     const nombre = document.getElementById('registerName').value;
     const apellido = document.getElementById('registerLastName').value;
     const email = document.getElementById('registerEmail').value;
@@ -46,6 +51,11 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         message.textContent = 'Error de conexión con el servidor';
     }
 });
+
+// Cerrar el modal
+document.getElementById('closeTermsModal').onclick = function() {
+    document.getElementById('termsModal').style.display = 'none';
+};
 
 /*
 // Mostrar/ocultar campo celular según tipo de usuario

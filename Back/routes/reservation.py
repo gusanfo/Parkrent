@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from math import ceil
 from fastapi import HTTPException, status
 from config.parametros import *
+from services.emails import sendEmail
 
 
 "metodos para ver todas las reservas por cliente, por parqueadero por dueño, si se implementa el estado de la reserva en la base de datos un metodo que ejecute cada dia para revisar las fehcas y poner las reservas en un estado especifico"
@@ -83,7 +84,33 @@ async def createReservation(connection,
         
         reservation_id = cursor.lastrowid
         connection.commit()
-        
+        # 5. enviar correo al cliente
+        reservationInfo = await getDataByReservationId(connection, reservation_id)
+        await sendEmail(
+            to=reservationInfo["correoCliente"],
+            subject="Reserva Confirmada",
+            body=HTML_RESERVATION_CONFIRMATION_CUSTOMER.format(
+                reservation_id=reservation_id,
+                startDate=startDate.strftime("%Y-%m-%d %H:%M"),
+                endDate=enddate.strftime("%Y-%m-%d %H:%M"),
+                address=reservationInfo["direccion"],
+                owner=reservationInfo["owner"],
+                phone=reservationInfo["telefono"]
+            )
+        )
+        # 6. enviar correo al dueño del parqueadero
+        await sendEmail(
+            to=reservationInfo["correoOwner"],
+            subject="Nueva Reserva Confirmada",
+            body=HTML_RESERVATION_CONFIRMATION_OWNER.format(
+                reservation_id=reservation_id,
+                startDate=startDate.strftime("%Y-%m-%d %H:%M"),
+                endDate=enddate.strftime("%Y-%m-%d %H:%M"),
+                address=reservationInfo["direccion"],
+                customer=reservationInfo["cliente"]
+                
+            )
+        )
         return {
             "status": "success",
             "reservation_id": reservation_id,
@@ -143,3 +170,24 @@ async def deleteReservation(connection, reservationId: int):
             )
         connection.commit()
         return {"status": "success", "message": "Reserva eliminada correctamente"}
+    
+async def getDataByReservationId(connection, reservationId: int):
+    """
+    Obtiene los datos de una reserva por ID
+    Args:
+        connection: conexión a la base de datos
+        reservationId: ID de la reserva
+    Returns:
+        dict: datos de la reserva
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(SQL_GET_RESERVATION_BY_ID, {
+            RESERVATION: reservationId
+        })
+        result = cursor.fetchone()
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Reserva no encontrada"
+            )
+        return result
